@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4e9e8" />
+    <meta name="description" content="Kenangan dalam koleksi Museum Kita." />
+    <title>Month Memories — Our Museum</title>
+    <link rel="stylesheet" href="./month.css" />
+    <script defer src="./data.js"></script>
+    <script defer src="./month.js"></script>
+  </head>
+  <body>
+    <header class="month-header">
+      <a class="brand" href="./archive.html" aria-label="Our Museum, kembali ke Archive">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 40 34"><path d="M3 11 20 3l17 8H3Zm4 3h26M8 15v12m8-12v12m8-12v12m8-12v12M5 29h30M3 32h34" /></svg>
+        </span>
+        <span class="brand__copy">
+          <span class="brand__name">Our Museum</span>
+          <span class="brand__motto">every memory deserves a place.</span>
+        </span>
+      </a>
+
+      <div class="header-actions">
+        <a class="back-button" href="./archive.html">
+          <svg viewBox="0 0 22 18" aria-hidden="true"><path d="M20 9H3m7-7-7 7 7 7" /></svg>
+          <span>Back</span>
+        </a>
+        <span class="more-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+        </span>
+      </div>
+    </header>
+
+    <main class="month-page" id="month-page">
+      <div class="month-empty" id="month-empty" hidden>
+        <p>Bulan ini belum memiliki memory.</p>
+        <a href="./archive.html">Kembali ke Archive</a>
+      </div>
+
+      <div id="month-content" hidden>
+        <section class="memory-overview" aria-labelledby="memory-title">
+          <aside class="memory-info">
+            <a class="month-back" id="month-back" href="./archive.html">
+              <svg viewBox="0 0 20 16" aria-hidden="true"><path d="M18 8H3m6-6L3 8l6 6" /></svg>
+              <span id="month-label"></span>
+            </a>
+
+            <div class="memory-date">
+              <span class="memory-date__day" id="date-day"></span>
+              <span class="memory-date__month-year" id="date-month-year"></span>
+            </div>
+
+            <h1 id="memory-title"></h1>
+            <p class="memory-subtitle" id="memory-subtitle"></p>
+            <div class="memory-meta">
+              <p class="memory-location" id="memory-location">
+                <svg viewBox="0 0 20 24" aria-hidden="true"><path d="M16.8 9.2c0 5.1-6.8 12.1-6.8 12.1S3.2 14.3 3.2 9.2a6.8 6.8 0 1 1 13.6 0Z"/><circle cx="10" cy="9" r="2.2"/></svg>
+                <span></span>
+              </p>
+              <p class="memory-mood" id="memory-mood"></p>
+            </div>
+          </aside>
+
+          <div class="memory-stage-column">
+            <div class="memory-stage" id="memory-stage" aria-live="polite"></div>
+            <div class="stage-controls">
+              <span class="stage-counter" id="stage-counter"></span>
+              <button class="stage-next" id="stage-next" type="button" aria-label="Media berikutnya">
+                <svg viewBox="0 0 22 18" aria-hidden="true"><path d="M2 9h18m-7-7 7 7-7 7" /></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="memory-story" aria-label="Cerita memory">
+          <div class="hand-note" id="story-note"></div>
+          <div class="memory-story__copy" id="memory-story"></div>
+        </section>
+
+        <section class="media-section" aria-labelledby="media-title">
+          <div class="media-heading">
+            <h2 id="media-title">Media dalam momen ini</h2>
+            <span id="media-count"></span>
+          </div>
+          <div class="media-grid" id="media-grid"></div>
+        </section>
+
+        <nav class="memory-pager" aria-label="Navigasi memory dalam bulan ini" id="memory-pager"></nav>
+      </div>
+    </main>
+  </body>
+</html>

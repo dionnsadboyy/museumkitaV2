@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4e9e8" />
+    <meta name="description" content="Satu kenangan dari perjalanan Museum Kita." />
+    <title>Chapter Detail — Our Museum</title>
+    <link rel="stylesheet" href="./chapter.css" />
+    <script defer src="./data.js"></script>
+    <script defer src="./chapter.js"></script>
+  </head>
+  <body>
+    <header class="chapter-header">
+      <a class="brand" href="./archive.html" aria-label="Our Museum, kembali ke Archive">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 40 34"><path d="M3 11 20 3l17 8H3Zm4 3h26M8 15v12m8-12v12m8-12v12m8-12v12M5 29h30M3 32h34" /></svg>
+        </span>
+        <span class="brand__copy">
+          <span class="brand__name">Our Museum</span>
+          <span class="brand__motto">every memory deserves a place.</span>
+        </span>
+      </a>
+
+      <div class="header-actions">
+        <a class="back-button" href="./archive.html#chapters" aria-label="Kembali ke Chapters di Archive">
+          <svg viewBox="0 0 22 18" aria-hidden="true"><path d="M20 9H3m7-7-7 7 7 7" /></svg>
+          <span>Archive</span>
+        </a>
+        <span class="more-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+        </span>
+      </div>
+    </header>
+
+    <main class="chapter-page">
+      <section class="chapter-empty" id="chapter-empty" hidden>
+        <p>Chapter ini belum ditemukan.</p>
+        <a href="./archive.html#chapters">Kembali ke Chapters</a>
+      </section>
+
+      <div id="chapter-content" hidden>
+        <section class="chapter-overview" aria-labelledby="chapter-title">
+          <aside class="chapter-info">
+            <p class="chapter-kicker"><span id="chapter-number"></span><i></i></p>
+            <div class="chapter-date">
+              <span class="chapter-date__day" id="date-day"></span>
+              <time class="chapter-date__month-year" id="date-month-year"></time>
+            </div>
+            <h1 id="chapter-title"></h1>
+            <p class="chapter-subtitle" id="chapter-subtitle"></p>
+            <div class="chapter-meta">
+              <p class="chapter-location">
+                <svg viewBox="0 0 20 24" aria-hidden="true"><path d="M16.8 9.2c0 5.1-6.8 12.1-6.8 12.1S3.2 14.3 3.2 9.2a6.8 6.8 0 1 1 13.6 0Z"/><circle cx="10" cy="9" r="2.2"/></svg>
+                <span id="chapter-location"></span>
+              </p>
+              <p class="chapter-mood" id="chapter-mood"></p>
+            </div>
+          </aside>
+
+          <div class="chapter-stage-column">
+            <div class="chapter-stage" id="chapter-stage" aria-live="polite"></div>
+            <div class="stage-controls">
+              <span class="stage-counter" id="stage-counter"></span>
+              <button class="stage-next" id="stage-next" type="button" aria-label="Media berikutnya">
+                <svg viewBox="0 0 22 18" aria-hidden="true"><path d="M2 9h18m-7-7 7 7-7 7" /></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter-story" aria-labelledby="story-heading">
+          <aside class="story-aside">
+            <p class="story-aside__label" id="story-heading">Cerita dari hari itu</p>
+            <div class="story-note" aria-label="Mood memory">
+              <span class="story-note__mood" id="story-note-mood"></span>
+              <span class="story-note__date" id="story-note-date"></span>
+            </div>
+          </aside>
+          <div class="chapter-story__copy" id="chapter-story"></div>
+        </section>
+
+        <section class="media-section" aria-labelledby="media-heading">
+          <div class="media-heading">
+            <h2 id="media-heading">Media dalam momen ini</h2>
+            <span id="media-count"></span>
+          </div>
+          <div class="media-grid" id="media-grid"></div>
+        </section>
+
+        <nav class="chapter-pager" id="chapter-pager" aria-label="Navigasi chapter"></nav>
+      </div>
+    </main>
+  </body>
+</html>

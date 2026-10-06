@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4e9e8" />
+    <meta name="description" content="Cerita perjalanan Dion dan Chelsea." />
+    <title>Our Story — Dion &amp; Chelsea</title>
+    <link rel="stylesheet" href="./story.css" />
+    <script defer src="./data.js"></script>
+    <script defer src="./story.js"></script>
+  </head>
+  <body>
+    <header class="story-header">
+      <a class="brand" href="./archive.html" aria-label="Our Museum, kembali ke Archive">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 40 34"><path d="M3 11 20 3l17 8H3Zm4 3h26M8 15v12m8-12v12m8-12v12m8-12v12M5 29h30M3 32h34" /></svg>
+        </span>
+        <span class="brand__copy">
+          <span class="brand__name">Our Museum</span>
+          <span class="brand__motto">every memory deserves a place.</span>
+        </span>
+      </a>
+
+      <div class="header-actions">
+        <a class="back-button" href="./archive.html">
+          <svg viewBox="0 0 22 18" aria-hidden="true"><path d="M20 9H3m7-7-7 7 7 7" /></svg>
+          <span>Archive</span>
+        </a>
+        <span class="more-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+        </span>
+      </div>
+    </header>
+
+    <main class="story-page">
+      <section class="story-intro" aria-labelledby="story-title">
+        <div class="story-intro__copy">
+          <p class="section-index"><span>dari hari kedua kita kenal</span><i></i></p>
+          <h1 id="story-title">Our Story</h1>
+          <p class="story-intro__description">dari awal kita bertemu,<br class="wide-break" /> sampai semua cerita sekarang.</p>
+          <p class="hand-note hand-note--intro">hari kedua setelah kita kenal <span>♡</span></p>
+        </div>
+
+        <div class="intro-collage">
+          <figure class="intro-strip intro-strip--back" aria-hidden="true"><img id="intro-strip-back" alt="" /></figure>
+          <figure class="intro-strip intro-strip--front" aria-hidden="true"><img id="intro-strip-front" alt="" /></figure>
+          <figure class="intro-photo">
+            <img id="intro-photo" alt="Momen bersama di awal perjalanan" fetchpriority="high" />
+          </figure>
+          <p class="intro-caption hand-note" id="intro-caption"></p>
+        </div>
+      </section>
+
+      <div class="story-divider" aria-hidden="true"></div>
+
+      <article class="story-journey" id="story-journey" aria-label="Perjalanan memory secara kronologis"></article>
+    </main>
+  </body>
+</html>
