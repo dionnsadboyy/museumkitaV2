@@ -1,5 +1,6 @@
 (() => {
   const museum = window.our_museum;
+  const media = window.MuseumMedia;
   if (!museum) return;
 
   const chapters = [...(museum.gallery || [])].sort((a, b) =>
@@ -28,24 +29,6 @@
   let mediaItems = [];
   let selectedMedia = 0;
 
-  const posterFor = (album) => album.coverType === "photo"
-    ? album.cover
-    : (album.photos || [])[0] || "";
-
-  const getMediaItems = (album) => {
-    const items = [];
-    const add = (type, src) => {
-      if (src && !items.some((item) => item.src === src)) {
-        items.push({ type, src, poster: type === "video" ? posterFor(album) : "" });
-      }
-    };
-
-    if (album.cover) add(album.coverType === "video" ? "video" : "photo", album.cover);
-    (album.photos || []).forEach((src) => add("photo", src));
-    (album.videos || []).forEach((src) => add("video", src));
-    return items;
-  };
-
   const storyParagraphs = (story = "") => {
     const sentences = String(story).match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
     const paragraphs = [];
@@ -66,15 +49,13 @@
     nextButton.hidden = mediaItems.length < 2;
 
     if (active.type === "photo") {
-      stage.innerHTML = `<img class="stage-photo" src="${escapeHTML(active.src)}" data-fallback="${escapeHTML(posterFor(chapter))}" alt="${escapeHTML(displayTitle(chapter.title))} — ${selectedMedia + 1}" fetchpriority="high" decoding="async" />`;
+      stage.innerHTML = media.image(active.src, { alt: `${displayTitle(chapter.title)} — ${selectedMedia + 1}`, priority: true });
       return;
     }
 
-    const poster = active.poster
-      ? `<img class="stage-video__poster" src="${escapeHTML(active.poster)}" alt="" fetchpriority="high" decoding="async" />`
-      : `<span class="stage-video__mood" aria-hidden="true">${escapeHTML(chapter.mood || "")}</span>`;
+    const poster = media.image(active.src, { alt: `Cuplikan ${displayTitle(chapter.title)}`, priority: true });
     stage.innerHTML = `<div class="stage-video">${poster}<button class="stage-play" type="button" data-play-video="${escapeHTML(active.src)}" data-poster="${escapeHTML(active.poster)}" aria-label="Putar video ${selectedMedia + 1}">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z" /></svg><span>Putar video</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z" /></svg>
     </button></div>`;
   };
 
@@ -90,13 +71,19 @@
     grid.innerHTML = mediaItems.map((item, index) => {
       const label = item.type === "video" ? `video ${index + 1}` : `foto ${index + 1}`;
       const selected = index === selectedMedia;
-      const visual = item.type === "photo"
-        ? `<img src="${escapeHTML(item.src)}" data-fallback="${escapeHTML(posterFor(chapter))}" alt="" loading="lazy" decoding="async" />`
-        : `${item.poster ? `<img src="${escapeHTML(item.poster)}" alt="" loading="lazy" decoding="async" />` : `<span class="video-thumb__mood" aria-hidden="true">${escapeHTML(chapter.mood || "")}</span>`}<span class="thumb-play" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m7 4 9 6-9 6z" /></svg></span>`;
-      return `<button class="media-thumb${item.type === "video" ? " media-thumb--video" : ""}${selected ? " is-selected" : ""}" type="button" data-media-index="${index}" aria-label="Pilih ${escapeHTML(label)}" aria-pressed="${selected}">
+      const visual = media.image(item.src, { size: 'thumb' }) + (item.type === 'video' ? `<span class="thumb-play" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m7 4 9 6-9 6z" /></svg></span>` : '');
+      return `<button class="media-thumb${item.type === "video" ? " media-thumb--video" : ""}${selected ? " is-selected" : ""}" type="button" data-media-index="${index}" aria-label="Buka ${escapeHTML(label)}" aria-haspopup="dialog" aria-pressed="${selected}">
         ${visual}<span class="media-kind" aria-hidden="true">${item.type === "video" ? "▶" : "▧"}</span>
       </button>`;
     }).join("");
+  };
+
+  const selectMedia = (index) => {
+    selectedMedia = index;
+    document.querySelectorAll('[data-media-index]').forEach((button, i) => {
+      button.classList.toggle('is-selected', i === index);
+      button.setAttribute('aria-pressed', String(i === index));
+    });
     renderStage();
   };
 
@@ -110,10 +97,7 @@
       </span>`;
     }
 
-    const thumbnail = item.coverType === "photo" ? item.cover : (item.photos || [])[0];
-    const thumb = thumbnail
-      ? `<img src="${escapeHTML(thumbnail)}" alt="" loading="lazy" decoding="async" />`
-      : `<span class="pager-video" aria-hidden="true">${escapeHTML(item.mood || "▶")}</span>`;
+    const thumb = media.image(item.cover, { size: 'thumb' });
     return `<a class="pager-item pager-item--${direction}" href="./chapter.html?chapter=${encodeURIComponent(item.chapter)}">
       <span class="pager-thumb">${thumb}</span>
       <span class="pager-copy"><span class="pager-label">${arrow} ${label}</span><span class="pager-title">Chapter ${String(item.chapter).padStart(2, "0")} · ${escapeHTML(displayTitle(item.title))}</span><span class="pager-date">${escapeHTML(item.date)}</span></span>
@@ -135,51 +119,28 @@
   moodElement.hidden = !chapter.mood;
   document.querySelector("#story-note-mood").textContent = chapter.mood || "";
   document.querySelector("#story-note-date").textContent = chapter.date || "";
-  document.querySelector("#chapter-story").innerHTML = storyParagraphs(chapter.story);
+  document.querySelector("#chapter-story").innerHTML = storyParagraphs(chapter.story) + media.note(chapter);
 
-  mediaItems = getMediaItems(chapter);
+  mediaItems = media.items(chapter);
+  selectedMedia = media.initialIndex(chapter, mediaItems);
   renderMediaGrid();
-  content.addEventListener("error", (event) => {
-    const image = event.target;
-    if (!(image instanceof HTMLImageElement)) return;
-    const fallback = image.dataset.fallback;
-    if (fallback && !image.dataset.fallbackUsed && image.getAttribute("src") !== fallback) {
-      image.dataset.fallbackUsed = "true";
-      image.src = fallback;
-    } else {
-      image.remove();
-    }
-  }, true);
+  renderStage();
 
   document.querySelector("#media-grid").addEventListener("click", (event) => {
     const button = event.target.closest("[data-media-index]");
     if (!button) return;
-    selectedMedia = Number(button.dataset.mediaIndex);
-    renderMediaGrid();
+    media.openViewer({ items: mediaItems, index: Number(button.dataset.mediaIndex), title: displayTitle(chapter.title), caption: [chapter.date, chapter.location].filter(Boolean).join(' · '), trigger: button, onChange: selectMedia });
   });
 
   document.querySelector("#chapter-stage").addEventListener("click", async (event) => {
     const button = event.target.closest("[data-play-video]");
     if (!button) return;
-    const video = document.createElement("video");
-    video.className = "memory-video-player";
-    video.controls = true;
-    video.playsInline = true;
-    video.preload = "none";
-    if (button.dataset.poster) video.poster = button.dataset.poster;
-    video.src = button.dataset.playVideo;
-    document.querySelector("#chapter-stage").replaceChildren(video);
-    try {
-      await video.play();
-    } catch {
-      video.focus();
-    }
+    await media.play(document.querySelector('#chapter-stage'), button.dataset.playVideo, button.dataset.poster);
   });
 
   document.querySelector("#stage-next").addEventListener("click", () => {
     if (mediaItems.length < 2) return;
-    selectedMedia = (selectedMedia + 1) % mediaItems.length;
-    renderMediaGrid();
+    selectMedia((selectedMedia + 1) % mediaItems.length);
   });
 
   const previous = chapters[currentIndex - 1];

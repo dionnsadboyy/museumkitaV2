@@ -228,6 +228,10 @@ main { width: 100%; }
   .bottom-dock__item { min-width: 82px; min-height: 51px; font-size: 11px; }
 }
 
+@media (max-width: 600px) {
+  .chapter-grid:not(.is-list) .chapter-card__image-wrap { aspect-ratio: 4 / 3; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; }

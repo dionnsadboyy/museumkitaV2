@@ -27,7 +27,7 @@ body {
   isolation: isolate;
   display: grid;
   min-height: 100svh;
-  padding: clamp(30px, 5.4vw, 82px) 20px;
+  padding: clamp(16px, 3svh, 32px) 20px;
   overflow: hidden;
   place-items: center;
   background: #e8d9eb;
@@ -49,11 +49,11 @@ body {
   position: relative;
   z-index: 1;
   display: flex;
-  width: min(790px, 100%);
-  min-height: min(1320px, calc(100svh - 88px));
+  width: min(650px, 100%);
+  min-height: 0;
   flex-direction: column;
   align-items: center;
-  padding: clamp(34px, 4.5vw, 56px) clamp(24px, 7vw, 78px) 46px;
+  padding: clamp(22px, 3svh, 32px) clamp(24px, 7vw, 65px);
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 87%);
   border-radius: clamp(32px, 6vw, 58px);
@@ -76,7 +76,7 @@ body {
 .cover__top { display: flex; width: 100%; align-items: center; justify-content: center; }
 .private-label {
   display: flex;
-  min-height: 52px;
+  min-height: 38px;
   align-items: center;
   gap: 14px;
   padding: 0 21px;
@@ -93,10 +93,10 @@ body {
 .lock-icon { width: 14px; fill: none; stroke: #c87cae; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
 .cover__seal { display: none; }
 
-.cover__intro { display: flex; flex-direction: column; align-items: center; margin-top: clamp(48px, 7vh, 91px); text-align: center; }
-.museum-mark { width: 31px; margin-bottom: 31px; fill: var(--ink); stroke: var(--ink); stroke-linecap: square; stroke-width: 1.5; }
+.cover__intro { display: flex; flex-direction: column; align-items: center; margin-top: clamp(18px, 3svh, 32px); text-align: center; }
+.museum-mark { width: 25px; margin-bottom: 14px; fill: var(--ink); stroke: var(--ink); stroke-linecap: square; stroke-width: 1.5; }
 .eyebrow { margin: 0 0 12px; color: #82688e; font-size: clamp(14px, 2vw, 19px); font-weight: 700; letter-spacing: .28em; text-transform: uppercase; }
-h1 { display: grid; margin: 0; font-size: clamp(68px, 11.5vw, 124px); font-weight: 500; letter-spacing: -.075em; line-height: .86; text-transform: uppercase; }
+h1 { display: grid; margin: 0; font-size: clamp(60px, 10svh, 100px); font-weight: 500; letter-spacing: -.075em; line-height: .86; text-transform: uppercase; }
 h1 span:first-child { color: #8253a8; }
 h1 span:last-child {
   margin-top: 7px;
@@ -104,51 +104,54 @@ h1 span:last-child {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.cover__motto { margin: 22px 0 0; color: #745a7c; font-size: clamp(22px, 4vw, 34px); font-style: italic; line-height: 1.08; transform: rotate(-3deg); }
+.cover__motto { margin: 16px 0 0; color: #745a7c; font-size: clamp(20px, 3svh, 28px); font-style: italic; line-height: 1.08; transform: rotate(-3deg); }
 
 .established {
   display: grid;
-  min-width: 260px;
-  margin-top: clamp(34px, 5vh, 59px);
-  padding: 18px 34px 20px;
+  min-width: 0;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 10px 20px;
   justify-items: center;
   border: 1px solid #e7cce8;
   border-radius: 27px;
   background: #fcf2f8;
 }
 .established__label { font-size: 12px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; }
-.established__rule { width: 16px; height: 1px; margin: 11px 0 7px; background: #9877a2; }
-.established__date { color: #8152a4; font-size: 28px; }
+.established__rule { display: none; }
+.established__date { color: #8152a4; font-size: 20px; }
 
 .quote-note {
   position: relative;
   display: flex;
   width: min(100%, 560px);
-  min-height: 128px;
+  min-height: 0;
   align-items: center;
   justify-content: center;
-  margin: clamp(35px, 5vh, 55px) 0 0;
-  padding: 24px 34px;
+  margin: 20px 0 0;
+  padding: 15px 24px;
   background: #f7f1eb;
   color: #76627c;
 }
 .quote-note::before { position: absolute; inset: 0; border: 1px solid rgb(155 129 150 / 10%); content: ""; transform: rotate(-.6deg); }
-.quote-note p { position: relative; margin: 0; font-size: clamp(18px, 3vw, 27px); line-height: 1.22; }
+.quote-note p { position: relative; margin: 0; font-size: clamp(16px, 2.5svh, 21px); line-height: 1.3; }
 .quote-note__mark { align-self: flex-start; margin: -5px 16px 0 0; color: #bd8ad1; font-size: 58px; font-weight: 700; line-height: .85; }
 .quote-note__heart { align-self: flex-end; margin: 0 0 -2px 20px; color: #b46fa5; font-family: Georgia, serif; font-size: 34px; }
 
 .enter-button {
   display: flex;
   width: min(100%, 560px);
-  min-height: 78px;
+  min-height: 54px;
   align-items: center;
   justify-content: center;
   gap: 18px;
-  margin-top: clamp(34px, 5vh, 52px);
+  margin-top: 22px;
   border-radius: 999px;
   background: linear-gradient(105deg, #8953b1, #b36fbd 66%, #dc83b8);
   color: white;
-  font-size: clamp(23px, 4vw, 34px);
+  font-size: 23px;
   text-decoration: none;
   box-shadow: 0 13px 26px rgb(150 91 174 / 18%);
   transition: transform 180ms ease, filter 180ms ease;
@@ -157,7 +160,7 @@ h1 span:last-child {
 .enter-button:focus-visible { outline: 3px solid #634479; outline-offset: 5px; }
 .enter-button svg { width: 26px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
 
-.cover__footer { width: min(100%, 380px); margin-top: 28px; text-align: center; }
+.cover__footer { width: min(100%, 380px); margin-top: 18px; text-align: center; }
 .footer-rule { display: flex; align-items: center; gap: 16px; color: #c478a6; font-family: Arial, sans-serif; font-size: 19px; }
 .footer-rule::before, .footer-rule::after { height: 1px; flex: 1; background: #d9bdce; content: ""; }
 .cover__footer p { margin: 11px 0 0; color: #806b87; font-size: 15px; letter-spacing: .09em; }
@@ -168,8 +171,9 @@ h1 span:last-child {
 .polaroid {
   position: absolute;
   z-index: 2;
-  width: clamp(150px, 23vw, 245px);
+  width: clamp(150px, 20vw, 220px);
   margin: 0;
+  pointer-events: none;
   padding: 10px 10px 12px;
   background: #fbf8f1;
   box-shadow: 0 8px 25px rgb(66 43 73 / 18%);
@@ -186,37 +190,61 @@ h1 span:last-child {
 
 @media (max-width: 650px) {
   .opening { padding: 18px 12px; }
-  .cover { min-height: calc(100svh - 36px); padding: 27px 21px 27px; border-radius: 31px; }
-  .private-label { min-height: 42px; gap: 10px; padding: 0 14px; font-size: 10px; letter-spacing: .18em; }
-  .cover__intro { margin-top: clamp(39px, 7vh, 63px); }
-  .museum-mark { width: 27px; margin-bottom: 22px; }
-  h1 { font-size: clamp(62px, 16vw, 96px); }
-  .cover__motto { margin-top: 18px; }
-  .established { min-width: 225px; margin-top: 31px; padding: 14px 25px 16px; }
-  .established__date { font-size: 25px; }
-  .quote-note { min-height: 105px; margin-top: 29px; padding: 18px 17px; }
-  .quote-note p { font-size: clamp(16px, 4.5vw, 21px); }
+  .cover { padding: 22px 21px; border-radius: 31px; }
+  .private-label { min-height: 36px; gap: 10px; padding: 0 14px; font-size: 10px; letter-spacing: .18em; }
+  .cover__intro { margin-top: clamp(18px, 3svh, 28px); }
+  .museum-mark { width: 23px; margin-bottom: 12px; }
+  h1 { font-size: clamp(56px, 9.5svh, 78px); }
+  .cover__motto { margin-top: 14px; font-size: 22px; }
+  .established { margin-top: 20px; padding: 10px 16px; }
+  .established__date { font-size: 19px; }
+  .quote-note { margin-top: 18px; padding: 14px 17px; }
+  .quote-note p { font-size: 16px; }
   .quote-note__mark { margin-right: 9px; font-size: 43px; }
   .quote-note__heart { margin-left: 8px; font-size: 26px; }
-  .enter-button { min-height: 62px; margin-top: 27px; font-size: 23px; }
+  .enter-button { min-height: 52px; margin-top: 20px; font-size: 22px; }
   .enter-button svg { width: 22px; }
-  .cover__footer { margin-top: 21px; }
+  .cover__footer { margin-top: 16px; }
   .cover__footer p { font-size: 12px; }
   .scribble--left { bottom: 3%; left: 5%; font-size: 47px; }
   .scribble--right { top: 35%; right: 5%; font-size: 29px; }
   .polaroid { width: 118px; padding: 6px 6px 8px; }
   .polaroid figcaption { padding-top: 5px; font-size: 8px; }
-  .polaroid--sunset { top: 12%; left: -37px; }
-  .polaroid--together { right: -32px; bottom: 10%; }
+  .polaroid--sunset { top: 4%; left: -40px; width: 96px; }
+  .polaroid--together { z-index: 0; right: -32px; bottom: 3%; }
 }
 
 @media (max-width: 380px) {
   .cover { padding-right: 16px; padding-left: 16px; }
-  .cover__intro { margin-top: 35px; }
-  h1 { font-size: 61px; }
   .quote-note { padding-right: 11px; padding-left: 11px; }
   .desktop-break { display: none; }
   .polaroid { opacity: .82; }
+}
+
+@media (max-height: 700px) {
+  .opening { padding-top: 12px; padding-bottom: 12px; }
+  .cover { padding-top: 18px; padding-bottom: 18px; }
+  .cover__intro { margin-top: 16px; }
+  .museum-mark { display: none; }
+  .eyebrow { font-size: 12px; margin-bottom: 10px; }
+  h1 { font-size: clamp(48px, 9svh, 62px); }
+  .cover__motto { margin-top: 12px; font-size: 20px; }
+  .established { margin-top: 16px; }
+  .quote-note { margin-top: 16px; padding-top: 12px; padding-bottom: 12px; }
+  .quote-note__mark { font-size: 38px; }
+  .enter-button { margin-top: 18px; }
+  .cover__footer { margin-top: 14px; }
+  .cover__footer p { margin-top: 7px; }
+}
+
+@media (max-height: 500px) and (min-width: 651px) {
+  .cover { width: min(850px, 100%); display: grid; grid-template-columns: 1fr 1fr; gap: 14px 30px; }
+  .cover__top, .cover__footer { grid-column: 1 / -1; justify-self: center; }
+  .cover__intro { grid-row: 2 / 5; margin: 0; }
+  .established, .quote-note, .enter-button { margin: 0; }
+  .quote-note p { font-size: 15px; }
+  .cover__seal, .scribble { display: none; }
+  .polaroid { z-index: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

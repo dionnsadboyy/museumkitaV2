@@ -1,5 +1,6 @@
 (() => {
   const museum = window.our_museum;
+  const media = window.MuseumMedia;
   if (!museum) return;
 
   const chapters = [...(museum.gallery || [])].sort((a, b) =>
@@ -38,9 +39,8 @@
     chapterGrid.innerHTML = visibleChapters.map((chapter) => {
       const number = String(chapter.chapter).padStart(2, "0");
       const title = displayTitle(chapter.title);
-      const cover = chapter.coverType === "photo" && chapter.cover
-        ? `<img src="${escapeHTML(chapter.cover)}" alt="" loading="lazy" decoding="async" />`
-        : `<span class="chapter-card__video-cover"><span class="chapter-card__mood" aria-hidden="true">${escapeHTML(chapter.mood || "")}</span><span class="chapter-card__play" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m7 4 9 6-9 6z" /></svg></span><span class="chapter-card__video-label">Video memory</span></span>`;
+      const cover = media.image(chapter.cover, { size: 'thumb', alt: title })
+        + (chapter.coverType === 'video' ? `<span class="chapter-card__play" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m7 4 9 6-9 6z" /></svg></span>` : '');
       const photos = chapter.photos?.length || 0;
       const videos = chapter.videos?.length || 0;
       const mediaLabel = [photos ? `${photos} foto` : "", videos ? `${videos} video` : ""].filter(Boolean).join(" · ");
@@ -48,7 +48,7 @@
 
       return `
         <a class="chapter-card" href="${href}" aria-label="Chapter ${number}: ${escapeHTML(title)} — ${escapeHTML(chapter.subtitle)}">
-          <span class="chapter-card__image-wrap">${cover}</span>
+          <span class="chapter-card__image-wrap" style="--cover-position: ${escapeHTML(chapter.coverPosition || '50% 50%')}">${cover}</span>
           <span class="chapter-card__body">
             <span class="chapter-card__topline"><span class="chapter-card__number">Chapter ${number}</span><span class="chapter-card__arrow" aria-hidden="true"><svg viewBox="0 0 20 16"><path d="M2 8h16m-6-6 6 6-6 6" /></svg></span></span>
             <span class="chapter-card__name">${escapeHTML(title)}</span>

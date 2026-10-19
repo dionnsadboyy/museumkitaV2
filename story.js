@@ -1,4 +1,5 @@
 (() => {
+  const media = window.MuseumMedia;
   const albums = [...(window.our_museum?.gallery || [])].sort((a, b) =>
     a.sortDate.localeCompare(b.sortDate),
   );
@@ -12,31 +13,30 @@
   const earliest = albums[0];
   const latest = albums[albums.length - 1];
   const introPhoto = (album, index = 0) => album.photos?.[index] || album.cover;
-  document.querySelector("#intro-photo").src = introPhoto(earliest, 7);
-  document.querySelector("#intro-strip-back").src = introPhoto(earliest, 0);
-  document.querySelector("#intro-strip-front").src = introPhoto(latest, 1);
+  document.querySelector("#intro-photo").outerHTML = media.image(earliest.cover, { alt: 'Momen bersama di awal perjalanan', priority: true });
+  document.querySelector("#intro-strip-back").outerHTML = media.image(introPhoto(earliest, 0), { size: 'thumb' });
+  document.querySelector("#intro-strip-front").outerHTML = media.image(latest.cover, { size: 'thumb' });
   document.querySelector("#intro-caption").innerHTML = `${escapeHTML(latest.subtitle)} <span>♡</span>`;
 
   const renderCover = (album) => {
     if (album.coverType === "video") {
       return `
         <div class="memory-cover memory-cover--video" data-video-frame>
-          <span class="video-label">Video memory</span>
+          ${media.image(album.cover, { alt: album.title })}
           <button class="play-video" type="button" data-video="${escapeHTML(album.cover)}" aria-label="Putar video: ${escapeHTML(album.title)}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z" /></svg>
-            <span>Play memory</span>
           </button>
         </div>`;
     }
     return `
       <figure class="memory-cover">
-        <img src="${escapeHTML(album.cover)}" alt="${escapeHTML(album.title)} — ${escapeHTML(album.subtitle)}" loading="lazy" decoding="async" />
+        ${media.image(album.cover, { alt: `${album.title} — ${album.subtitle}` })}
       </figure>`;
   };
 
   const renderPhotos = (album) => (album.photos || []).slice(1, 3).map((src, index) => `
     <figure class="memory-print">
-      <img src="${escapeHTML(src)}" alt="${escapeHTML(album.title)} — foto ${index + 2}" loading="lazy" decoding="async" />
+      ${media.image(src, { size: 'thumb', alt: `${album.title} — foto ${index + 2}` })}
     </figure>`).join("");
 
   const renderClips = (album) => {
@@ -70,6 +70,7 @@
           <h2 id="moment-title-${escapeHTML(album.id)}">${escapeHTML(displayTitle(album.title))}</h2>
           <p class="moment-subtitle">${escapeHTML(album.subtitle)}</p>
           <p class="moment-story">${escapeHTML(album.story)}</p>
+          ${media.note(album)}
           <div class="moment-meta">${location}${mood}</div>
           ${extras ? `<div class="moment-media" aria-label="Foto dan video ${escapeHTML(album.title)}">${extras}</div>` : ""}
         </div>
@@ -83,19 +84,8 @@
 
     const source = button.dataset.video;
     const frame = button.closest("[data-video-frame]");
-    const video = document.createElement("video");
-    video.className = "story-video-player";
-    video.controls = true;
-    video.playsInline = true;
-    video.preload = "none";
-    video.setAttribute("aria-label", "Memory video");
-    video.src = source;
-    if (frame) frame.replaceChildren(video);
-    else button.replaceWith(video);
-    try {
-      await video.play();
-    } catch {
-      video.focus();
-    }
+    const container = frame || document.createElement('span');
+    if (!frame) button.replaceWith(container);
+    await media.play(container, source, media.entry(source)?.large);
   });
 })();
