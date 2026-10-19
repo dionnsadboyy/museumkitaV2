@@ -11,6 +11,9 @@
     "check": "node scripts/check.mjs",
     "check:viewer": "node scripts/check-viewer.mjs",
     "check:music": "node scripts/check-music-gallery.mjs",
+    "check:music-motion": "node scripts/check-music-motion.mjs",
+    "check:playlist": "node scripts/check-playlist.mjs",
+    "check:music-library": "node scripts/check-music-library.mjs",
     "check:audio-hosting": "node scripts/check-audio-hosting.mjs",
     "check:assets": "node scripts/check-assets.mjs"
   },

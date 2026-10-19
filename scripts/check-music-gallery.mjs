@@ -3,6 +3,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
+import { useSingleTrackFixture } from './music-test-fixture.mjs';
 
 const base = process.env.MUSEUM_URL || 'http://127.0.0.1:4183';
 let server;
@@ -17,11 +18,14 @@ const output = '.museum-checks/task-1-2';
 fs.mkdirSync(output, { recursive: true });
 const report = { checks: [], viewports: [], errors: [], limitations: ['Safari/iPhone hardware and WebKit unavailable locally.'] };
 const context = await browser.newContext();
+await useSingleTrackFixture(context);
 const page = await context.newPage();
 page.on('pageerror', error => report.errors.push(error.message));
 const check = name => { report.checks.push(name); console.log('PASS', name); };
 const waitPlaying = () => page.waitForFunction(() => !MuseumMusic.audio.paused && MuseumMusic.audio.currentTime > .1 && document.querySelector('.music-player').classList.contains('is-playing'));
 const swipe = async (dx, dy) => {
+  // Measure after the shape transition; pointer coordinates must use the settled pill.
+  await page.waitForTimeout(480);
   const box = await page.locator('.music-player').boundingBox();
   const x = box.x + box.width / 2;
   const y = box.y + 18;
@@ -29,7 +33,7 @@ const swipe = async (dx, dy) => {
   await page.mouse.down();
   await page.mouse.move(x + dx, y + dy, { steps: 8 });
   await page.mouse.up();
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(480);
 };
 try {
   for (const width of [320, 390, 430, 768, 1440]) {
@@ -215,6 +219,7 @@ try {
   await page.unroute('**/chapter.html?chapter=2');
   check('Navigation failure retains current content and exposes an explicit reload fallback');
   const touchContext = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  await useSingleTrackFixture(touchContext);
   const touch = await touchContext.newPage();
   touch.on('pageerror', error => report.errors.push(error.message));
   await touch.goto(`${base}/archive.html#chapters`);

@@ -6,6 +6,8 @@
   try { saved = JSON.parse(sessionStorage.getItem('museum-music') || '{}'); } catch { /* Storage can be unavailable. */ }
   let index = Math.max(0, playlist.findIndex(track => track.src === saved.src));
   let mode = ['pill', 'expanded', 'mini'].includes(saved.mode) ? saved.mode : 'pill';
+  let sortBy = ['original', 'title', 'album'].includes(saved.sortBy) ? saved.sortBy : 'original';
+  let libraryOpen = false;
   let restoreTime = Number.isFinite(saved.time) && saved.time > 0 ? saved.time : 0;
   let resumeAfterVideo = false;
   let buffering = false;
@@ -22,21 +24,106 @@
   root.setAttribute('aria-label', 'Pemutar musik');
   const playIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 4 13 8-13 8z"/></svg>';
   const pauseIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg>';
-  const coverIcon = '<svg viewBox="0 0 40 34" aria-hidden="true"><path d="M3 11 20 3l17 8H3Zm4 3h26M8 15v12m8-12v12m8-12v12m8-12v12M5 29h30M3 32h34"/></svg>';
-  const bars = '<span class="music-bars" aria-hidden="true"><i></i><i></i><i></i></span>';
-  root.innerHTML = `<div class="music-pill"><button class="music-open" type="button" aria-label="Buka pemutar musik" aria-controls="music-panel" aria-expanded="false"><span class="music-cover"></span><span class="music-pill-title"></span></button><button class="music-toggle" type="button" aria-label="Putar musik"></button>${bars}</div>
-    <div class="music-panel" id="music-panel" hidden><button class="music-handle" type="button" aria-label="Kecilkan ke pill"></button><div class="music-track"><span class="music-cover"></span><div class="music-track-copy"><h2 class="music-title"></h2><p class="music-artist"></p></div>${bars}</div><input class="music-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Posisi lagu" disabled><div class="music-times"><span class="music-elapsed">0:00</span><span class="music-duration">0:00</span></div><div class="music-controls"><button class="music-previous" type="button" aria-label="Lagu sebelumnya"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h3v16H4zm16 0v16L8 12z"/></svg></button><button class="music-toggle" type="button" aria-label="Putar musik"></button><button class="music-next" type="button" aria-label="Lagu berikutnya"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 4h3v16h-3zM4 4l12 8-12 8z"/></svg></button></div><button class="music-minimize" type="button">Sembunyikan ke cover kecil</button></div>
-    <button class="music-mini" type="button" aria-label="Tampilkan pill musik" hidden><span class="music-cover"></span></button><p class="music-status" role="status" aria-live="polite" hidden></p>`;
+  const bars = '<span class="music-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>';
+  root.innerHTML = `<div class="music-cover"><span class="music-cover-photo"></span><span class="music-cover-label">our soundtrack ♡</span></div>
+    <div class="music-track-copy"><h2 class="music-title music-pill-title"></h2><p class="music-artist"></p></div>${bars}
+    <div class="music-pill"><button class="music-open" type="button" aria-label="Buka pemutar musik" aria-controls="music-panel" aria-expanded="false"></button><button class="music-toggle" type="button" aria-label="Putar musik"></button></div>
+    <div class="music-panel" id="music-panel" inert aria-hidden="true"><span class="music-grip" aria-hidden="true"></span><button class="music-handle" type="button" aria-label="Kecilkan ke pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><input class="music-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Posisi lagu" disabled><div class="music-times"><span class="music-elapsed">0:00</span><span class="music-duration">0:00</span></div><div class="music-controls"><button class="music-previous" type="button" aria-label="Lagu sebelumnya"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h3v16H4zm16 0v16L8 12z"/></svg></button><button class="music-toggle" type="button" aria-label="Putar musik"></button><button class="music-next" type="button" aria-label="Lagu berikutnya"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 4h3v16h-3zM4 4l12 8-12 8z"/></svg></button></div><p class="music-dedication"><span></span>Dion &amp; Chelsea<span></span></p></div>
+    <button class="music-mini" type="button" aria-label="Tampilkan pill musik" inert aria-hidden="true"></button><p class="music-status" role="status" aria-live="polite" hidden></p>`;
   document.body.append(audio, root);
+  const libraryToggle = document.createElement('button');
+  libraryToggle.className = 'music-library-toggle';
+  libraryToggle.type = 'button';
+  libraryToggle.setAttribute('aria-label', 'Pilih lagu');
+  libraryToggle.setAttribute('aria-expanded', 'false');
+  libraryToggle.setAttribute('aria-controls', 'music-library');
+  libraryToggle.innerHTML = '<span>Pilih lagu <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></span>';
+  root.querySelector('.music-panel').append(libraryToggle);
+  const library = document.createElement('section');
+  library.className = 'music-library';
+  library.id = 'music-library';
+  library.inert = true;
+  library.setAttribute('aria-hidden', 'true');
+  library.setAttribute('aria-labelledby', 'music-library-title');
+  library.innerHTML = '<header class="music-library-header"><div><h2 id="music-library-title">Pilih lagu</h2><p class="music-library-count"></p></div><button class="music-library-close" type="button" aria-label="Tutup daftar lagu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header><label class="music-sort-label" for="music-sort">Urutkan<select id="music-sort" class="music-sort"><option value="original">Urutan awal</option><option value="title">Lagu A–Z</option><option value="album">Album A–Z</option></select></label><ul class="music-song-list" aria-label="Daftar lagu"></ul>';
+  root.append(library);
+  const songList = library.querySelector('.music-song-list');
+  const sortSelect = library.querySelector('.music-sort');
+  sortSelect.value = sortBy;
+  const collator = new Intl.Collator('id', { sensitivity: 'base', numeric: true });
+  const orderedTracks = () => playlist.map((track, trackIndex) => ({ track, trackIndex })).sort((a, b) => {
+    if (sortBy === 'original') return a.trackIndex - b.trackIndex;
+    if (sortBy === 'album') {
+      if (!a.track.album !== !b.track.album) return a.track.album ? -1 : 1;
+      const album = collator.compare(a.track.album || '', b.track.album || '') || collator.compare(a.track.artist || '', b.track.artist || '');
+      if (album) return album;
+    }
+    return collator.compare(a.track.title, b.track.title) || a.trackIndex - b.trackIndex;
+  });
+  const renderLibrary = () => {
+    library.querySelector('.music-library-count').textContent = `${playlist.length} lagu`;
+    const fragment = document.createDocumentFragment();
+    let lastGroup;
+    orderedTracks().forEach(({ track, trackIndex }, position) => {
+      const group = track.album ? `${track.album} · ${track.artist || ''}` : 'Tanpa album';
+      if (sortBy === 'album' && group !== lastGroup) {
+        const heading = document.createElement('li');
+        heading.className = 'music-album-heading';
+        heading.textContent = group;
+        fragment.append(heading);
+        lastGroup = group;
+      }
+      const item = document.createElement('li');
+      const button = document.createElement('button');
+      button.className = 'music-song';
+      button.type = 'button';
+      button.dataset.trackIndex = trackIndex;
+      button.setAttribute('aria-label', `Pilih ${track.title}, ${track.artist || 'artis tidak tersedia'}`);
+      if (trackIndex === index) button.setAttribute('aria-current', 'true');
+      const number = document.createElement('span');
+      number.className = 'music-song-number';
+      number.setAttribute('aria-hidden', 'true');
+      number.textContent = trackIndex === index ? '✓' : String(position + 1).padStart(2, '0');
+      const copy = document.createElement('span');
+      copy.className = 'music-song-copy';
+      const title = document.createElement('span');
+      title.className = 'music-song-title';
+      title.textContent = track.title;
+      const detail = document.createElement('span');
+      detail.className = 'music-song-detail';
+      detail.textContent = [track.artist, sortBy !== 'album' && (track.album || 'Tanpa album')].filter(Boolean).join(' · ');
+      copy.append(title, detail);
+      button.append(number, copy);
+      item.append(button);
+      fragment.append(item);
+    });
+    songList.replaceChildren(fragment);
+  };
+  const setLibraryOpen = (open, focus = false) => {
+    libraryOpen = Boolean(open && mode === 'expanded');
+    root.classList.toggle('is-library-open', libraryOpen);
+    library.inert = !libraryOpen;
+    library.setAttribute('aria-hidden', String(!libraryOpen));
+    libraryToggle.setAttribute('aria-expanded', String(libraryOpen));
+    root.querySelector('.music-panel').inert = mode !== 'expanded' || libraryOpen;
+    root.querySelector('.music-panel').setAttribute('aria-hidden', String(mode !== 'expanded' || libraryOpen));
+    root.querySelector('.music-track-copy').setAttribute('aria-hidden', String(mode === 'mini' || libraryOpen));
+    if (libraryOpen) {
+      renderLibrary();
+      songList.scrollTop = 0;
+      if (focus) sortSelect.focus({ preventScroll: true });
+    } else if (focus && mode === 'expanded') libraryToggle.focus({ preventScroll: true });
+  };
   const seek = root.querySelector('.music-seek');
   const save = () => {
-    try { sessionStorage.setItem('museum-music', JSON.stringify({ src: playlist[index].src, time: audio.currentTime || restoreTime, volume: audio.volume, mode })); } catch { /* Playback still works without storage. */ }
+    try { sessionStorage.setItem('museum-music', JSON.stringify({ src: playlist[index].src, time: audio.currentTime || restoreTime, volume: audio.volume, mode, sortBy })); } catch { /* Playback still works without storage. */ }
   };
   const format = value => `${Math.floor((value || 0) / 60)}:${String(Math.floor((value || 0) % 60)).padStart(2, '0')}`;
   const updateTime = () => {
     const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
     seek.max = duration;
     seek.value = audio.currentTime;
+    seek.style.setProperty('--seek-progress', `${duration ? audio.currentTime / duration * 100 : 0}%`);
     seek.disabled = !duration;
     seek.setAttribute('aria-valuetext', `${format(audio.currentTime)} dari ${format(duration)}`);
     root.querySelector('.music-elapsed').textContent = format(audio.currentTime);
@@ -53,13 +140,18 @@
     const message = root.querySelector('.music-status');
     message.textContent = status;
     message.hidden = !status;
+    root.classList.toggle('has-status', Boolean(status));
   };
   const setMode = (next, focus = false) => {
+    if (libraryOpen) setLibraryOpen(false);
     mode = next;
     root.dataset.mode = mode;
-    root.querySelector('.music-pill').hidden = mode !== 'pill';
-    root.querySelector('.music-panel').hidden = mode !== 'expanded';
-    root.querySelector('.music-mini').hidden = mode !== 'mini';
+    for (const [selector, state] of [['.music-pill', 'pill'], ['.music-panel', 'expanded'], ['.music-mini', 'mini']]) {
+      const element = root.querySelector(selector);
+      element.inert = mode !== state;
+      element.setAttribute('aria-hidden', String(mode !== state));
+    }
+    root.querySelector('.music-track-copy').setAttribute('aria-hidden', String(mode === 'mini'));
     root.querySelector('.music-open').setAttribute('aria-expanded', String(mode === 'expanded'));
     save();
     position();
@@ -67,16 +159,19 @@
   };
   const renderTrack = () => {
     const track = playlist[index];
-    root.querySelector('.music-pill-title').textContent = track.title;
     root.querySelector('.music-title').textContent = track.title;
+    root.querySelector('.music-title').title = track.title;
     root.querySelector('.music-artist').textContent = track.artist || 'Artis tidak tersedia';
-    root.querySelectorAll('.music-cover').forEach(cover => {
-      cover.innerHTML = coverIcon;
-      if (track.cover) {
+    root.querySelectorAll('.music-cover-photo').forEach(cover => {
+      const source = track.cover || window.MuseumMusicCover;
+      if (source && cover.dataset.src !== source) {
         const img = new Image();
         img.alt = '';
-        img.src = track.cover;
-        img.onerror = () => { cover.innerHTML = coverIcon; };
+        img.src = source;
+        img.decoding = 'async';
+        img.onerror = () => { img.hidden = true; cover.classList.add('has-error'); };
+        cover.classList.remove('has-error');
+        cover.dataset.src = source;
         cover.replaceChildren(img);
       }
     });
@@ -115,36 +210,55 @@
     save();
     render();
   };
-  const changeTrack = direction => {
-    if (playlist.length < 2) return;
+  const selectTrack = (nextIndex, direction = 1) => {
+    if (!Number.isInteger(nextIndex) || !playlist[nextIndex] || nextIndex === index) return;
     const keepPlaying = !audio.paused || buffering || resumeAfterVideo;
     pause();
-    index = (index + direction + playlist.length) % playlist.length;
+    index = nextIndex;
     restoreTime = 0;
     audio.removeAttribute('src');
     audio.load();
     status = '';
-    renderTrack();
+    animateTrack(direction);
     save();
     if (keepPlaying && activeVideo()) { resumeAfterVideo = true; status = 'Musik dijeda selama video diputar.'; }
     else if (keepPlaying) void start();
     render();
+    if (libraryOpen) renderLibrary();
   };
+  const changeTrack = direction => {
+    if (playlist.length < 2) return;
+    const order = orderedTracks().map(item => item.trackIndex);
+    const position = order.indexOf(index);
+    selectTrack(order[(position + direction + order.length) % order.length], direction);
+  };
+  sortSelect.addEventListener('change', () => {
+    sortBy = sortSelect.value;
+    renderLibrary();
+    songList.scrollTop = 0;
+    save();
+  });
   root.addEventListener('click', event => {
-    if (Date.now() < suppressClick) { event.preventDefault(); return; }
+    if (Date.now() < suppressClick && !event.target.closest('.music-library')) { event.preventDefault(); return; }
     const button = event.target.closest('button');
-    if (button?.matches('.music-toggle')) {
+    if (button?.matches('.music-library-toggle')) setLibraryOpen(true, true);
+    else if (button?.matches('.music-library-close')) setLibraryOpen(false, true);
+    else if (button?.matches('[data-track-index]')) {
+      selectTrack(Number(button.dataset.trackIndex));
+      setLibraryOpen(false, true);
+    } else if (button?.matches('.music-toggle')) {
       if (!audio.paused || buffering || resumeAfterVideo) pause();
       else { if (audio.error) { audio.load(); } void start(); }
     } else if (button?.matches('.music-mini')) setMode('pill', true);
     else if (button?.matches('.music-open')) setMode('expanded', true);
     else if (button?.matches('.music-handle')) setMode('pill', true);
-    else if (button?.matches('.music-minimize')) setMode('mini', true);
     else if (button?.matches('.music-next')) changeTrack(1);
     else if (button?.matches('.music-previous')) changeTrack(-1);
     else if (mode === 'pill') setMode('expanded', true);
   });
   root.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && libraryOpen) { event.preventDefault(); setLibraryOpen(false, true); return; }
+    if (event.target.closest('.music-library, select')) return;
     if (event.key === 'Escape') { event.preventDefault(); setMode(mode === 'expanded' ? 'pill' : 'mini', true); }
     if (event.target === seek) return;
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); changeTrack(event.key === 'ArrowLeft' ? -1 : 1); }
@@ -153,7 +267,7 @@
   let gesture;
   let suppressClick = 0;
   root.addEventListener('pointerdown', event => {
-    if (event.button !== 0 || event.target.closest('input')) return;
+    if (event.button !== 0 || event.target.closest('input, select, .music-library') || gesture) return;
     gesture = { id: event.pointerId, x: event.clientX, y: event.clientY };
   });
   window.addEventListener('pointerup', event => {
@@ -175,6 +289,33 @@
     }
   });
   root.addEventListener('pointercancel', () => { gesture = undefined; });
+  document.addEventListener('pointerdown', event => { if (libraryOpen && !root.contains(event.target)) setLibraryOpen(false); });
+  const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+  let trackMotions = [];
+  let trackSwapTimer;
+  function animateTrack(direction) {
+    clearTimeout(trackSwapTimer);
+    const elements = ['.music-cover-photo', '.music-track-copy'].map(selector => root.querySelector(selector));
+    const starts = elements.map(element => {
+      const style = getComputedStyle(element);
+      return { translate: style.translate, opacity: style.opacity };
+    });
+    trackMotions.forEach(animation => animation.cancel());
+    trackMotions = [];
+    if (motionPreference.matches) { renderTrack(); return; }
+    trackSwapTimer = setTimeout(renderTrack, 133);
+    elements.forEach((element, i) => {
+      trackMotions.push(element.animate([
+        { ...starts[i], offset: 0 },
+        { translate: `${-direction * 18}px 0`, opacity: 0, offset: .35 },
+        { translate: `${direction * 18}px 0`, opacity: 0, offset: .36 },
+        { translate: '0 0', opacity: 1, offset: 1 },
+      ], { duration: 380, easing: 'cubic-bezier(.22,.8,.28,1)' }));
+    });
+  }
+  motionPreference.addEventListener('change', () => {
+    if (motionPreference.matches) { clearTimeout(trackSwapTimer); trackMotions.forEach(animation => animation.cancel()); trackMotions = []; renderTrack(); }
+  });
   audio.addEventListener('loadedmetadata', () => {
     if (restoreTime) { audio.currentTime = Math.min(restoreTime, Math.max(0, audio.duration - .1)); restoreTime = 0; }
     updateTime();
@@ -216,11 +357,12 @@
   function position() {
     const dock = document.querySelector('.bottom-dock');
     root.style.bottom = dock ? `calc(${Math.ceil(dock.getBoundingClientRect().height) + 24}px + env(safe-area-inset-bottom))` : 'calc(12px + env(safe-area-inset-bottom))';
+    root.style.setProperty('--music-bottom-space', `${dock ? Math.ceil(dock.getBoundingClientRect().height) + 24 : 12}px`);
     document.documentElement.style.setProperty('--music-space', `${Math.ceil(root.getBoundingClientRect().height) + 24}px`);
   }
   new ResizeObserver(position).observe(root);
   window.addEventListener('resize', position);
-  window.addEventListener('museum:navigate', position);
+  window.addEventListener('museum:navigate', () => { if (libraryOpen) setLibraryOpen(false); position(); });
   window.addEventListener('pagehide', save);
   window.MuseumMusic = { audio, playlist, get index() { return index; }, pause };
   renderTrack();

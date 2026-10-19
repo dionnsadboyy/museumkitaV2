@@ -1,0 +1,83 @@
+{
+  "note": "Six links requested by the user, in supplied order. AAC streams downloaded as format 140 and remuxed to fast-start M4A without re-encoding.",
+  "tracks": [
+    {
+      "src": "./assets/music/titik-nadir-kahitna.m4a",
+      "title": "Titik Nadir",
+      "artist": "Kahitna",
+      "sourceUrl": "https://www.youtube.com/watch?v=BwdIEq7MSgs",
+      "sourceTitle": "Titik nadir -  Kahitna  ( Lirik )",
+      "metadataBasis": "Title and artist taken from the YouTube video title; channel name is not used as artist.",
+      "sourceDurationSeconds": 245,
+      "formatId": "140",
+      "codec": "AAC-LC",
+      "streamSha256": "027cdcd0d3214f2426c62a4bb84fd6295e1d554ef3e1e287328424567f551f8b",
+      "bytes": 3960774
+    },
+    {
+      "src": "./assets/music/jatuh-suka-tulus.m4a",
+      "title": "Jatuh Suka",
+      "artist": "TULUS",
+      "sourceUrl": "https://www.youtube.com/watch?v=2uJut6USftQ",
+      "sourceTitle": "TULUS - Jatuh Suka (Official Lyric Video)",
+      "metadataBasis": "Title and artist taken from the YouTube video title; channel name is not used as artist.",
+      "sourceDurationSeconds": 238,
+      "formatId": "140",
+      "codec": "AAC-LC",
+      "streamSha256": "5b2295267e663c11e19101fd823b38fb38a9dd8152b5d29394ed8268cc75a870",
+      "bytes": 3849230
+    },
+    {
+      "src": "./assets/music/teh-hijau-tulus.m4a",
+      "title": "Teh Hijau",
+      "artist": "TULUS",
+      "sourceUrl": "https://www.youtube.com/watch?v=RO75uUZiAw0",
+      "sourceTitle": "TULUS - Teh Hijau (Official Lyric Video)",
+      "metadataBasis": "Title and artist taken from the YouTube video title; channel name is not used as artist.",
+      "sourceDurationSeconds": 211,
+      "formatId": "140",
+      "codec": "AAC-LC",
+      "streamSha256": "153ff24b97c5c5808642b21ad39b9ce748d28511cda900301a07b579bd58cd65",
+      "bytes": 3413865
+    },
+    {
+      "src": "./assets/music/kasih-putih-glenn-fredly.m4a",
+      "title": "Kasih Putih",
+      "artist": "Glenn Fredly",
+      "sourceUrl": "https://www.youtube.com/watch?v=CVEPAN2eLYg",
+      "sourceTitle": "Glenn Fredly - Kasih Putih",
+      "metadataBasis": "Title and artist taken from the YouTube video title; channel name is not used as artist.",
+      "sourceDurationSeconds": 235,
+      "formatId": "140",
+      "codec": "AAC-LC",
+      "streamSha256": "4f9fe0c8b05049a22ab20af4e43f178bce469e6d9a1eefd67e6fb3c860516ee4",
+      "bytes": 3800151
+    },
+    {
+      "src": "./assets/music/kita-usahakan-rumah-itu-sal-priadi.m4a",
+      "title": "Kita usahakan rumah itu",
+      "artist": "Sal Priadi",
+      "sourceUrl": "https://www.youtube.com/watch?v=7SqNVv98e8Q",
+      "sourceTitle": "Sal Priadi - Kita usahakan rumah itu (Official Lyric Video)",
+      "metadataBasis": "Title and artist taken from the YouTube video title; channel name is not used as artist.",
+      "sourceDurationSeconds": 211,
+      "formatId": "140",
+      "codec": "AAC-LC",
+      "streamSha256": "ef8b3521d960d655a10aeef44ad4ada43ef77394d13f130a9c048553a5f63048",
+      "bytes": 3417788
+    },
+    {
+      "src": "./assets/music/mesra-mesraannya-kecil-kecilan-dulu-sal-priadi.m4a",
+      "title": "Mesra-mesraannya kecil-kecilan dulu",
+      "artist": "Sal Priadi",
+      "sourceUrl": "https://www.youtube.com/watch?v=aHxxbTq0TXE",
+      "sourceTitle": "Sal Priadi - Mesra-mesraannya kecil-kecilan dulu (Official Music Video)",
+      "metadataBasis": "Title and artist taken from the YouTube video title; channel name is not used as artist.",
+      "sourceDurationSeconds": 219,
+      "formatId": "140",
+      "codec": "AAC-LC",
+      "streamSha256": "8c2cec885999dc9d663473b49429c0279481a8939f07f1b780b6c487d6b09b97",
+      "bytes": 3540959
+    }
+  ]
+}

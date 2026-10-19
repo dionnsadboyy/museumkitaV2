@@ -1,0 +1,12 @@
+{
+  "note": "Album/release labels used by the picker; audio files and artist/title metadata are unchanged. Blank album remains unverified and is displayed as Tanpa album.",
+  "sources": [
+    { "title": "Panasea", "album": "Panasea - Single", "url": "https://music.apple.com/us/album/panasea-single/1773796762" },
+    { "title": "Titik Nadir", "album": "", "note": "The supplied unofficial lyric upload does not establish its exact release version. Do not infer the featured/single release from title similarity alone." },
+    { "title": "Jatuh Suka", "album": "Manusia", "url": "https://music.apple.com/us/song/1612164263" },
+    { "title": "Teh Hijau", "album": "Teh Hijau - Single", "url": "https://music.apple.com/us/album/teh-hijau-single/6784585100" },
+    { "title": "Kasih Putih", "album": "Kembali", "url": "https://music.apple.com/my/playlist/glenn-fredly-love-songs/pl.802a036d9de54aabb083adba8cd083e1" },
+    { "title": "Kita usahakan rumah itu", "album": "MARKERS & SUCH", "url": "https://www.youtube.com/watch?v=7SqNVv98e8Q", "note": "Release label follows the official upload description." },
+    { "title": "Mesra-mesraannya kecil-kecilan dulu", "album": "MARKERS & SUCH", "url": "https://www.youtube.com/watch?v=aHxxbTq0TXE", "note": "Release label follows the official upload description." }
+  ]
+}
