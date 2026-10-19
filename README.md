@@ -11,6 +11,18 @@ npm start
 
 Buka `http://127.0.0.1:4173`. Pada PowerShell yang memblokir `npm.ps1`, gunakan `npm.cmd`.
 
+Player musik memakai playlist terpusat di `music-playlist.js`: `src`, `title`, `artist`, dan `cover` (kosong untuk placeholder museum). Satu lagu yang tersedia adalah **Panasea — rumahsakit**, berdasarkan nama file; tidak ada tag judul/artis atau artwork tertanam. Sumber `.mp3` sebenarnya berisi AAC/MP4 terfragmentasi. Runtime memakai `assets/music/panasea-rumahsakit.m4a`, hasil remux ke kontainer M4A standar dengan metadata indeks di awal (fast start). Paket audio disalin memakai `-c:a copy`, tanpa encoding atau kompresi ulang; sumber asli tetap disimpan. Ekstensi M4A membuat server statis biasa dapat memilih MIME audio yang sesuai tanpa aturan khusus untuk MP3 palsu. Server lokal mengirim `audio/mp4` dan mendukung byte range.
+
+`museum-shell.js` mempertahankan satu audio element ketika tautan internal berpindah antara halaman statis yang dikenal. CSS halaman diganti, skrip halaman diinisialisasi ulang, dan URL, query, hash, serta back/forward tetap bekerja. Tautan eksternal, modifier klik, download, dan tab baru mengikuti perilaku browser. Jika navigasi gagal, halaman lama tetap tersedia dengan tautan reload yang menjelaskan bahwa musik akan berhenti. Reload penuh/tab baru tidak menjamin playback tanpa putus: sessionStorage menyimpan lagu, waktu, volume, dan kondisi player, lalu pengguna menekan play untuk melanjutkan. Tidak ada autoplay.
+
+Player memiliki pill, panel, dan cover kecil; tombol serta Escape menyediakan alternatif gesture. Swipe horizontal mengganti lagu, swipe bawah mengecilkan player. Previous/next disembunyikan saat hanya ada satu lagu. Musik dijeda ketika video dimainkan dan hanya dilanjutkan setelah semua video berhenti, jika pengguna belum membatalkan resume dengan menekan jeda. `music-player.css` menyisakan ruang konten, menghitung tinggi navbar dan safe area, serta menjaga player di bawah dialog galeri.
+
+Galeri detail memakai grid reguler 2 kolom di bawah 600 px, 3 kolom sampai 1023 px, dan 4 kolom mulai 1024 px. Semua thumbnail 3:4, tanpa featured/span; foto dan poster video memakai WebP kecil, lazy loading, ukuran stabil, placeholder polos, dan fallback. Crop default `50% 40%`; `thumbPosition` opsional pada entri manifest dapat dipakai untuk penyesuaian per media. Viewer tetap menampilkan media utuh.
+
+Jalankan `npm.cmd run check:music` untuk pengujian Chromium pada 320, 390, 430, 768, dan 1440 px, playback audio asli, seek, state player, gesture, konflik audio/video, navigasi/back-forward, pemulihan reload, keyboard, reduced motion, dan fallback. Hasil serta screenshot ada di `.museum-checks/task-1-2/`. Pergantian beberapa lagu diuji menggunakan entri sementara yang menunjuk audio yang sama, karena hanya ada satu lagu asli. Safari/iPhone dan WebKit belum diuji di lingkungan Windows ini.
+
+`npm.cmd run check:audio-hosting` memeriksa play/seek/pause di Google Chrome dan Microsoft Edge yang terpasang, melalui server statis biasa (tanpa deteksi format khusus), MIME generik, serta pembukaan langsung `file://`. Hasil ada di `.museum-checks/audio-hosting/results.json`. Setelah memperbarui playlist, refresh penuh halaman yang sudah terbuka agar audio shell memuat sumber terbaru.
+
 Cover chapter dipilih melalui `cover` (nama file di folder chapter), terpisah dari urutan `photos` dan `videos`. Detail membuka media pilihan tersebut; galeri tetap mengikuti urutan aslinya. Painting Date menggunakan `painting-date2.webp` untuk menampilkan piknik dengan komposisi utuh; selfie helm tetap di galeri.
 
 Untuk menambahkan catatan asli Chelsea, isi properti opsional ini pada chapter yang sesuai di `data.js`:

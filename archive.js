@@ -107,5 +107,5 @@
       quickMenu.hidden = true;
       menuToggle.setAttribute("aria-expanded", "false");
     }
-  });
+  }, { signal: window.MuseumShell?.signal });
 })();

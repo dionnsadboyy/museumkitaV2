@@ -362,5 +362,5 @@
     render();
     enter();
   };
-  window.MuseumMedia = { image, items, cover, initialIndex, note, play, entry, openViewer };
+  window.MuseumMedia = { image, items, cover, initialIndex, note, play, entry, openViewer, closeViewer: () => viewerCleanup?.() };
 })();

@@ -68,6 +68,7 @@ try {
   await page.goto(base);
   await page.locator('.enter-button').click();
   await page.waitForURL('**/archive.html');
+  await page.waitForFunction(() => document.querySelectorAll('.chapter-card').length === 8);
   assert.equal(await page.locator('.chapter-card').count(), 8);
   assert.equal(await page.locator('.chapter-card__play').count(), 2);
   for (const width of [390, 1366]) {

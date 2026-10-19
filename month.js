@@ -91,11 +91,10 @@
   const renderMediaGrid = () => {
     const grid = document.querySelector("#media-grid");
     document.querySelector("#media-count").textContent = `${mediaItems.length} media`;
-    grid.classList.toggle("media-grid--compact", mediaItems.length < 4);
     grid.innerHTML = mediaItems.map((item, index) => {
       const selected = index === selectedMedia;
       const label = `${displayTitle(selectedAlbum.title)} — ${item.type === "video" ? "video" : `foto ${index + 1}`}`;
-      return `<button class="media-thumb ${item.type === "video" ? "media-thumb--video" : ""} ${selected ? "is-selected" : ""}" type="button" data-media-index="${index}" aria-label="Buka ${escapeHTML(label)}" aria-haspopup="dialog" aria-pressed="${selected}">
+      return `<button class="media-thumb ${item.type === "video" ? "media-thumb--video" : ""} ${selected ? "is-selected" : ""}" type="button" style="--thumb-position: ${escapeHTML(media.entry(item.src)?.thumbPosition || '50% 40%')}" data-media-index="${index}" aria-label="Buka ${escapeHTML(label)}" aria-haspopup="dialog" aria-pressed="${selected}">
         ${media.image(item.src, { size: 'thumb' })}${item.type === 'video' ? `<span class="thumb-play" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m7 4 9 6-9 6z" /></svg></span>` : ''}
         <span class="media-kind" aria-hidden="true">${item.type === "video" ? "▶" : "▧"}</span>
       </button>`;

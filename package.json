@@ -10,6 +10,8 @@
     "build": "node scripts/build.mjs",
     "check": "node scripts/check.mjs",
     "check:viewer": "node scripts/check-viewer.mjs",
+    "check:music": "node scripts/check-music-gallery.mjs",
+    "check:audio-hosting": "node scripts/check-audio-hosting.mjs",
     "check:assets": "node scripts/check-assets.mjs"
   },
   "devDependencies": {

@@ -65,14 +65,11 @@
     const videoCount = chapter.videos?.length || 0;
     const counts = [photoCount ? `${photoCount} foto` : "", videoCount ? `${videoCount} video` : ""].filter(Boolean);
     document.querySelector("#media-count").textContent = `${mediaItems.length} media${counts.length ? ` · ${counts.join(" · ")}` : ""}`;
-    grid.classList.toggle("media-grid--compact", mediaItems.length < 4);
-    grid.classList.toggle("media-grid--two", mediaItems.length === 2);
-    grid.classList.toggle("media-grid--single", mediaItems.length === 1);
     grid.innerHTML = mediaItems.map((item, index) => {
       const label = item.type === "video" ? `video ${index + 1}` : `foto ${index + 1}`;
       const selected = index === selectedMedia;
       const visual = media.image(item.src, { size: 'thumb' }) + (item.type === 'video' ? `<span class="thumb-play" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m7 4 9 6-9 6z" /></svg></span>` : '');
-      return `<button class="media-thumb${item.type === "video" ? " media-thumb--video" : ""}${selected ? " is-selected" : ""}" type="button" data-media-index="${index}" aria-label="Buka ${escapeHTML(label)}" aria-haspopup="dialog" aria-pressed="${selected}">
+      return `<button class="media-thumb${item.type === "video" ? " media-thumb--video" : ""}${selected ? " is-selected" : ""}" type="button" style="--thumb-position: ${escapeHTML(media.entry(item.src)?.thumbPosition || '50% 40%')}" data-media-index="${index}" aria-label="Buka ${escapeHTML(label)}" aria-haspopup="dialog" aria-pressed="${selected}">
         ${visual}<span class="media-kind" aria-hidden="true">${item.type === "video" ? "▶" : "▧"}</span>
       </button>`;
     }).join("");

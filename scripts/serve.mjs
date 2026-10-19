@@ -3,14 +3,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.mp4': 'video/mp4', '.mov': 'video/quicktime', '.mp3': 'audio/mpeg' };
+const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.mp4': 'video/mp4', '.mov': 'video/quicktime', '.mp3': 'audio/mpeg', '.m4a': 'audio/mp4' };
 const server = http.createServer((req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
   const file = path.resolve(root, `.${pathname === '/' ? '/index.html' : pathname}`);
   if (!file.startsWith(root + path.sep)) { res.writeHead(403).end(); return; }
   fs.stat(file, (error, stat) => {
     if (error || !stat.isFile()) { res.writeHead(404).end('Not found'); return; }
-    const headers = { 'Content-Type': types[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Accept-Ranges': 'bytes' };
+    let contentType = types[path.extname(file).toLowerCase()] || 'application/octet-stream';
+    // The supplied song is MP4/AAC despite its .mp3 filename. Serve its actual format.
+    if (path.extname(file).toLowerCase() === '.mp3') {
+      const signature = Buffer.alloc(12);
+      const descriptor = fs.openSync(file, 'r');
+      try { fs.readSync(descriptor, signature, 0, signature.length, 0); } finally { fs.closeSync(descriptor); }
+      if (signature.toString('ascii', 4, 8) === 'ftyp') contentType = 'audio/mp4';
+    }
+    const headers = { 'Content-Type': contentType, 'Accept-Ranges': 'bytes' };
     const range = req.headers.range?.match(/^bytes=(\d+)-(\d*)$/);
     const start = range ? Number(range[1]) : 0;
     const end = range?.[2] ? Math.min(Number(range[2]), stat.size - 1) : stat.size - 1;
