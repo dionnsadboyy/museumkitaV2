@@ -1,4 +1,7 @@
 #museum-page { display: flow-root; padding-bottom: var(--music-space, 84px); }
+/* Welcome stays clear; the persistent player returns on the other pages. */
+body:has(#museum-page .opening) .music-player { display: none; }
+#museum-page:has(.opening) { padding-bottom: 0; }
 /* Keep the entry action clear of the player on short screens. */
 @media (max-height: 500px) and (min-width: 651px) {
   #museum-page .opening .cover { padding-block: 12px; gap: 10px 20px; }
