@@ -1,0 +1,65 @@
+[
+  {
+    "src": "./assets/music/panasea-rumahsakit.m4a",
+    "title": "Panasea",
+    "artist": "rumahsakit",
+    "album": "Panasea - Single",
+    "cover": "./assets/thumbnails/painting-date/painting-date2.webp",
+    "sourceUrl": "",
+    "id": "legacy:panasea-rumahsakit"
+  },
+  {
+    "src": "./assets/music/titik-nadir-kahitna.m4a",
+    "title": "Titik Nadir",
+    "artist": "Kahitna",
+    "album": "",
+    "cover": "./assets/thumbnails/painting-date/painting-date2.webp",
+    "sourceUrl": "https://www.youtube.com/watch?v=BwdIEq7MSgs",
+    "id": "youtube:BwdIEq7MSgs"
+  },
+  {
+    "src": "./assets/music/jatuh-suka-tulus.m4a",
+    "title": "Jatuh Suka",
+    "artist": "TULUS",
+    "album": "Manusia",
+    "cover": "./assets/thumbnails/painting-date/painting-date2.webp",
+    "sourceUrl": "https://www.youtube.com/watch?v=2uJut6USftQ",
+    "id": "youtube:2uJut6USftQ"
+  },
+  {
+    "src": "./assets/music/teh-hijau-tulus.m4a",
+    "title": "Teh Hijau",
+    "artist": "TULUS",
+    "album": "Teh Hijau - Single",
+    "cover": "./assets/thumbnails/painting-date/painting-date2.webp",
+    "sourceUrl": "https://www.youtube.com/watch?v=RO75uUZiAw0",
+    "id": "youtube:RO75uUZiAw0"
+  },
+  {
+    "src": "./assets/music/kasih-putih-glenn-fredly.m4a",
+    "title": "Kasih Putih",
+    "artist": "Glenn Fredly",
+    "album": "Kembali",
+    "cover": "./assets/thumbnails/painting-date/painting-date2.webp",
+    "sourceUrl": "https://www.youtube.com/watch?v=CVEPAN2eLYg",
+    "id": "youtube:CVEPAN2eLYg"
+  },
+  {
+    "src": "./assets/music/kita-usahakan-rumah-itu-sal-priadi.m4a",
+    "title": "Kita usahakan rumah itu",
+    "artist": "Sal Priadi",
+    "album": "MARKERS & SUCH",
+    "cover": "./assets/thumbnails/painting-date/painting-date2.webp",
+    "sourceUrl": "https://www.youtube.com/watch?v=7SqNVv98e8Q",
+    "id": "youtube:7SqNVv98e8Q"
+  },
+  {
+    "src": "./assets/music/mesra-mesraannya-kecil-kecilan-dulu-sal-priadi.m4a",
+    "title": "Mesra-mesraannya kecil-kecilan dulu",
+    "artist": "Sal Priadi",
+    "album": "MARKERS & SUCH",
+    "cover": "./assets/thumbnails/painting-date/painting-date2.webp",
+    "sourceUrl": "https://www.youtube.com/watch?v=aHxxbTq0TXE",
+    "id": "youtube:aHxxbTq0TXE"
+  }
+]

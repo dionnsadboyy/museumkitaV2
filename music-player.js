@@ -4,9 +4,9 @@
   if (!playlist.length) return;
   let saved = {};
   try { saved = JSON.parse(sessionStorage.getItem('museum-music') || '{}'); } catch { /* Storage can be unavailable. */ }
-  let index = Math.max(0, playlist.findIndex(track => track.src === saved.src));
+  let index = Math.max(0, playlist.findIndex(track => track.src === saved.src || track.previousSrcs?.includes(saved.src)));
   let mode = ['pill', 'expanded', 'mini'].includes(saved.mode) ? saved.mode : 'pill';
-  let sortBy = ['original', 'title', 'album'].includes(saved.sortBy) ? saved.sortBy : 'original';
+  const sortBy = 'album';
   let libraryOpen = false;
   let restoreTime = Number.isFinite(saved.time) && saved.time > 0 ? saved.time : 0;
   let resumeAfterVideo = false;
@@ -37,7 +37,7 @@
   libraryToggle.setAttribute('aria-label', 'Pilih lagu');
   libraryToggle.setAttribute('aria-expanded', 'false');
   libraryToggle.setAttribute('aria-controls', 'music-library');
-  libraryToggle.innerHTML = '<span>Pilih lagu <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></span>';
+  libraryToggle.innerHTML = '<svg class="music-library-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h11M4 11h11M4 16h6m9-5v8m0-8 3-1v7m-3 2c0 1-3 1-3 0s3-1 3 0zm3-2c0 1-3 1-3 0s3-1 3 0z"/></svg><span>Pilih lagu</span><svg class="music-library-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 4 4 4-4 4"/></svg>';
   root.querySelector('.music-panel').append(libraryToggle);
   const library = document.createElement('section');
   library.className = 'music-library';
@@ -45,19 +45,14 @@
   library.inert = true;
   library.setAttribute('aria-hidden', 'true');
   library.setAttribute('aria-labelledby', 'music-library-title');
-  library.innerHTML = '<header class="music-library-header"><div><h2 id="music-library-title">Pilih lagu</h2><p class="music-library-count"></p></div><button class="music-library-close" type="button" aria-label="Tutup daftar lagu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header><label class="music-sort-label" for="music-sort">Urutkan<select id="music-sort" class="music-sort"><option value="original">Urutan awal</option><option value="title">Lagu A–Z</option><option value="album">Album A–Z</option></select></label><ul class="music-song-list" aria-label="Daftar lagu"></ul>';
+  library.innerHTML = '<header class="music-library-header"><div><h2 id="music-library-title">Pilih lagu</h2><p class="music-library-count"></p></div><button class="music-library-close" type="button" aria-label="Tutup daftar lagu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header><p class="music-library-order">Dikelompokkan menurut album</p><ul class="music-song-list" aria-label="Daftar lagu"></ul>';
   root.append(library);
   const songList = library.querySelector('.music-song-list');
-  const sortSelect = library.querySelector('.music-sort');
-  sortSelect.value = sortBy;
   const collator = new Intl.Collator('id', { sensitivity: 'base', numeric: true });
   const orderedTracks = () => playlist.map((track, trackIndex) => ({ track, trackIndex })).sort((a, b) => {
-    if (sortBy === 'original') return a.trackIndex - b.trackIndex;
-    if (sortBy === 'album') {
-      if (!a.track.album !== !b.track.album) return a.track.album ? -1 : 1;
-      const album = collator.compare(a.track.album || '', b.track.album || '') || collator.compare(a.track.artist || '', b.track.artist || '');
-      if (album) return album;
-    }
+    if (!a.track.album !== !b.track.album) return a.track.album ? -1 : 1;
+    const album = collator.compare(a.track.album || '', b.track.album || '') || collator.compare(a.track.artist || '', b.track.artist || '');
+    if (album) return album;
     return collator.compare(a.track.title, b.track.title) || a.trackIndex - b.trackIndex;
   });
   const renderLibrary = () => {
@@ -111,7 +106,7 @@
     if (libraryOpen) {
       renderLibrary();
       songList.scrollTop = 0;
-      if (focus) sortSelect.focus({ preventScroll: true });
+      if (focus) (songList.querySelector('[aria-current="true"]') || songList.querySelector('button'))?.focus({ preventScroll: true });
     } else if (focus && mode === 'expanded') libraryToggle.focus({ preventScroll: true });
   };
   const seek = root.querySelector('.music-seek');
@@ -232,12 +227,6 @@
     const position = order.indexOf(index);
     selectTrack(order[(position + direction + order.length) % order.length], direction);
   };
-  sortSelect.addEventListener('change', () => {
-    sortBy = sortSelect.value;
-    renderLibrary();
-    songList.scrollTop = 0;
-    save();
-  });
   root.addEventListener('click', event => {
     if (Date.now() < suppressClick && !event.target.closest('.music-library')) { event.preventDefault(); return; }
     const button = event.target.closest('button');
@@ -267,7 +256,7 @@
   let gesture;
   let suppressClick = 0;
   root.addEventListener('pointerdown', event => {
-    if (event.button !== 0 || event.target.closest('input, select, .music-library') || gesture) return;
+    if (event.button !== 0 || event.target.closest('input, select, .music-library, .music-library-toggle') || gesture) return;
     gesture = { id: event.pointerId, x: event.clientX, y: event.clientY };
   });
   window.addEventListener('pointerup', event => {

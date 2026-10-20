@@ -78,7 +78,7 @@ try {
   await page.locator('.music-pill .music-toggle').click();
   await waitPlaying();
   assert.equal(await page.locator('.music-player').getAttribute('data-mode'), 'pill');
-  check('No autoplay/preload; independent play button; actual supplied AAC song plays');
+  check('No autoplay/preload; independent play button; actual supplied song plays');
   await page.locator('.music-open').click();
   await page.locator('.music-seek').fill('45');
   assert(await page.evaluate(() => MuseumMusic.audio.currentTime >= 45));

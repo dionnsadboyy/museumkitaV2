@@ -44,7 +44,7 @@ try {
       assert(size.sameCover && size.loaded && size.singleAudio && !size.overflow);
       assert(size.x >= 16 && size.right <= width - 16 && size.gap >= 10 && size.gap <= 12);
       if (mode === 'pill') { assert(size.height >= 56 && size.height <= 60); assert(size.width <= 320); }
-      if (mode === 'expanded') { assert(size.width <= 360 && size.height >= 220 && size.height <= 260); }
+      if (mode === 'expanded') { assert(size.width <= 360 && size.height >= 260 && size.height <= 316); }
       if (mode === 'mini') assert(size.width >= 90 && size.width <= 110);
     };
     await assertState('pill');

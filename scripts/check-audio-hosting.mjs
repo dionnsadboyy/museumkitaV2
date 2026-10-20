@@ -5,10 +5,17 @@ import http from 'node:http';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { chromium } from 'playwright';
+import vm from 'node:vm';
 
 const root = process.cwd();
 const reports = [];
-const types = { '.js': 'text/javascript', '.html': 'text/html', '.css': 'text/css', '.webp': 'image/webp', '.m4a': 'audio/mp4' };
+const types = { '.js': 'text/javascript', '.html': 'text/html', '.css': 'text/css', '.webp': 'image/webp', '.m4a': 'audio/mp4', '.mp3': 'audio/mpeg' };
+const config = { window: {} };
+vm.runInNewContext(fs.readFileSync('music-playlist.js', 'utf8'), config);
+const firstTrack = config.window.MuseumPlaylist[0];
+const importReport = fs.existsSync('scripts/audio-playlist-report.json') ? JSON.parse(fs.readFileSync('scripts/audio-playlist-report.json','utf8')) : null;
+const expectedDuration = importReport?.tracks.find(track => track.src === firstTrack.src)?.durationSeconds || 271.3;
+const expectedMime = path.extname(firstTrack.src) === '.mp3' ? 'audio/mpeg' : 'audio/mp4';
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const file = path.resolve(root, '.' + decodeURIComponent(url.pathname));
@@ -47,9 +54,9 @@ try {
           throw error;
         });
         const result = await page.evaluate(() => ({ url: MuseumMusic.audio.currentSrc, duration: MuseumMusic.audio.duration, time: MuseumMusic.audio.currentTime, error: MuseumMusic.audio.error?.code || 0 }));
-        assert(result.duration > 270 && result.duration < 272);
+        assert(Math.abs(result.duration - expectedDuration) < 2);
         assert.equal(result.error, 0);
-        if (hosting === 'standard-static') { assert([200, 206].includes(responses[0].status)); assert.equal(responses[0].mime, 'audio/mp4'); }
+        if (hosting === 'standard-static') { assert([200, 206].includes(responses[0].status)); assert.equal(responses[0].mime, expectedMime); }
         await page.locator('.music-panel .music-toggle').click();
         assert(await page.evaluate(() => MuseumMusic.audio.paused));
         reports.push({ channel, hosting, ...result, status: 'passed' });

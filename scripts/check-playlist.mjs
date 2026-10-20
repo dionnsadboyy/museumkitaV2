@@ -4,10 +4,11 @@ import vm from 'node:vm';
 import { spawn, spawnSync } from 'node:child_process';
 import ffmpeg from 'ffmpeg-static';
 import { chromium } from 'playwright';
+import { useLegacyLibraryFixture } from './music-test-fixture.mjs';
 
 const config = { window: {} };
 vm.runInNewContext(fs.readFileSync('music-playlist.js', 'utf8'), config);
-const tracks = JSON.parse(JSON.stringify(config.window.MuseumPlaylist));
+const tracks = JSON.parse(fs.readFileSync('scripts/audio-playlist-legacy.json', 'utf8'));
 const inventory = JSON.parse(fs.readFileSync('scripts/music-sources.json', 'utf8')).tracks;
 assert.equal(tracks.length, 7);
 assert.equal(new Set(tracks.map(track => track.src)).size, 7);
@@ -38,6 +39,7 @@ try {
     const browser = await chromium.launch({ channel });
     try {
       const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+      await useLegacyLibraryFixture(context);
       const page = await context.newPage();
       page.on('pageerror', error => report.errors.push(error.message));
       const requests = [];
@@ -53,7 +55,7 @@ try {
       assert.equal(await page.locator('.music-previous:visible, .music-next:visible').count(), 2);
       await page.locator('.music-panel .music-toggle').click();
       const played = [];
-      for (let i = 0; i < tracks.length; i++) {
+      for (const i of [0, 3, 1, 4, 2, 5, 6]) {
         await waitTrack(i); await playing();
         const actual = await page.evaluate(() => ({ src: MuseumMusic.audio.currentSrc, duration: MuseumMusic.audio.duration, count: document.querySelectorAll('audio').length, same: audioIdentity === MuseumMusic.audio && coverIdentity === document.querySelector('.music-cover img') }));
         assert.equal(new URL(actual.src).pathname, new URL(tracks[i].src, base + '/').pathname);

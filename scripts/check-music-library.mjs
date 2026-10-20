@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { spawn } from 'node:child_process';
 import { chromium } from 'playwright';
+import { useLegacyLibraryFixture } from './music-test-fixture.mjs';
 
 const out = '.museum-checks/music-library';
 fs.mkdirSync(out, { recursive: true });
@@ -9,20 +10,23 @@ const server = spawn(process.execPath, ['scripts/serve.mjs'], { env: { ...proces
 await new Promise((resolve, reject) => { server.stdout.once('data', resolve); server.once('error', reject); });
 const browser = await chromium.launch({ channel: 'chrome' });
 const report = { checks: [], errors: [], limitations: ['Mobile touch emulated in Chrome; Safari/iPhone not tested.'] };
-const settle = page => page.waitForTimeout(470);
+const settle = page => page.waitForFunction(() => !document.querySelector('.music-player').getAnimations({ subtree: true }).some(animation => animation instanceof CSSTransition && animation.playState === 'running'));
 const playing = page => page.waitForFunction(() => !MuseumMusic.audio.paused && MuseumMusic.audio.currentTime > .1 && document.querySelector('.music-player').classList.contains('is-playing'));
 const waitTrack = (page, index) => page.waitForFunction(index => MuseumMusic.index === index && document.querySelector('.music-title').textContent === MuseumMusic.playlist[index].title, index);
 let page;
 try {
   for (const [width, height] of [[320, 844], [390, 844], [430, 844], [1440, 900], [844, 390]]) {
     const context = await browser.newContext({ viewport: { width, height }, hasTouch: true, isMobile: width < 500 });
+    await useLegacyLibraryFixture(context);
     page = await context.newPage();
     page.on('pageerror', error => report.errors.push(error.message));
     await page.goto('http://127.0.0.1:4186/archive.html#chapters');
     await page.evaluate(() => { window.audioIdentity = MuseumMusic.audio; window.coverIdentity = document.querySelector('.music-cover img'); });
     await page.locator('.music-open').click(); await settle(page);
-    await page.locator('.music-library-toggle').click(); await settle(page);
-    assert.deepEqual(await page.locator('.music-song').evaluateAll(elements => elements.map(el => Number(el.dataset.trackIndex))), [0,1,2,3,4,5,6]);
+    const toggleBox=await page.locator('.music-library-toggle').boundingBox();
+    assert(toggleBox.width>=140 && toggleBox.height>=44);
+    await page.touchscreen.tap(toggleBox.x+8,toggleBox.y+8); await settle(page);
+    assert.deepEqual(await page.locator('.music-song').evaluateAll(elements => elements.map(el => Number(el.dataset.trackIndex))), [4,2,5,6,0,3,1]);
     assert.equal(await page.locator('.music-song[aria-current="true"]').getAttribute('data-track-index'), '0');
     const bounds = await page.evaluate(() => {
       const r=document.querySelector('.music-player').getBoundingClientRect();
@@ -32,17 +36,13 @@ try {
     });
     assert(!bounds.overflow && bounds.left>=16 && bounds.right<=width-16 && bounds.top>=23 && bounds.gap>=10 && bounds.gap<=12 && bounds.scrollable);
     assert(await page.evaluate(() => MuseumMusic.audio.paused && !MuseumMusic.audio.getAttribute('src')));
-    await page.locator('.music-sort').selectOption('title');
-    assert.deepEqual(await page.locator('.music-song').evaluateAll(elements=>elements.map(el=>Number(el.dataset.trackIndex))), [2,4,5,6,0,3,1]);
-    await page.locator('.music-sort').focus(); await page.keyboard.press('ArrowRight');
-    assert.equal(await page.evaluate(()=>MuseumMusic.index),0);
-    await page.locator('.music-sort').selectOption('title');
+    assert.equal(await page.locator('select.music-sort').count(),0);
     await page.locator('.music-song[data-track-index="5"]').click(); await waitTrack(page,5); await settle(page);
     assert.equal(await page.locator('.music-library-toggle').getAttribute('aria-expanded'),'false');
     assert(await page.evaluate(()=>MuseumMusic.audio.paused && !MuseumMusic.audio.getAttribute('src')));
     await page.locator('.music-panel .music-toggle').click(); await playing(page);
     await page.evaluate(()=>MuseumMusic.audio.currentTime=37); await playing(page);
-    await page.locator('.music-library-toggle').click(); await page.locator('.music-sort').selectOption('album');
+    await page.locator('.music-library-toggle').click();
     assert.deepEqual(await page.locator('.music-album-heading').allTextContents(), ['Kembali · Glenn Fredly','Manusia · TULUS','MARKERS & SUCH · Sal Priadi','Panasea - Single · rumahsakit','Teh Hijau - Single · TULUS','Tanpa album']);
     assert.deepEqual(await page.locator('.music-song').evaluateAll(elements=>elements.map(el=>Number(el.dataset.trackIndex))), [4,2,5,6,0,3,1]);
     assert(await page.evaluate(()=>!MuseumMusic.audio.paused && MuseumMusic.audio.currentTime>=37 && MuseumMusic.index===5));
@@ -53,7 +53,10 @@ try {
     await page.locator('.music-library-toggle').click();
     await page.locator('.music-song[data-track-index="5"]').click(); await settle(page);
     assert(await page.evaluate(()=>MuseumMusic.audio.currentTime>=41 && audioIdentity===MuseumMusic.audio && coverIdentity===document.querySelector('.music-cover img') && document.querySelectorAll('audio').length===1));
-    await page.locator('.music-library-toggle').click(); await page.keyboard.press('Escape');
+    await page.screenshot({path:`${out}/expanded-${width}.png`});
+    await page.locator('.music-library-toggle').focus(); await page.keyboard.press('Enter');
+    assert.equal(await page.locator('.music-song[aria-current="true"]').evaluate(el=>el===document.activeElement),true);
+    await page.keyboard.press('Escape');
     assert.equal(await page.locator('.music-player').getAttribute('data-mode'),'expanded');
     assert.equal(await page.locator('.music-library-toggle').getAttribute('aria-expanded'),'false');
     await page.locator('.music-library-toggle').click(); await settle(page);
@@ -68,9 +71,6 @@ try {
       await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]}); await page.waitForTimeout(350);
       const after=await page.evaluate(()=>({list:document.querySelector('.music-song-list').scrollTop,page:scrollY,index:MuseumMusic.index}));
       assert(after.list>before.list && after.page===before.page && after.index===before.index);
-      await page.locator('.music-sort').selectOption('title');
-      await page.screenshot({path:`${out}/song-picker-mobile.png`});
-      await page.locator('.music-sort').selectOption('album');
     }
     await page.mouse.click(8,100); await settle(page);
     assert.equal(await page.locator('.music-library-toggle').getAttribute('aria-expanded'),'false');
@@ -78,13 +78,13 @@ try {
       await page.locator('.chapter-card').nth(1).click(); await page.waitForFunction(()=>!!document.querySelector('#media-grid button'));
       assert(await page.evaluate(()=>audioIdentity===MuseumMusic.audio && MuseumMusic.index===5 && !MuseumMusic.audio.paused));
       await page.locator('.music-library-toggle').click();
-      assert.equal(await page.locator('.music-sort').inputValue(),'album');
+      assert.equal(await page.locator('.music-library-order').textContent(),'Dikelompokkan menurut album');
       await page.locator('.music-library-close').click();
       await page.goBack(); await page.waitForFunction(()=>!!document.querySelector('.chapter-card'));
       await page.reload(); await settle(page);
       assert(await page.evaluate(()=>MuseumMusic.audio.paused && MuseumMusic.index===5));
       await page.locator('.music-library-toggle').click();
-      assert.equal(await page.locator('.music-sort').inputValue(),'album');
+      assert.equal(await page.locator('.music-library-order').textContent(),'Dikelompokkan menurut album');
       assert.equal(await page.locator('.music-song[aria-current="true"]').getAttribute('data-track-index'),'5');
       await page.locator('.music-library-close').click();
       await page.locator('.music-panel .music-toggle').click(); await playing(page);
@@ -94,11 +94,11 @@ try {
       await page.locator('.media-viewer__close').click(); await page.waitForFunction(()=>!document.querySelector('.media-viewer')); await playing(page);
       assert.equal(await page.evaluate(()=>MuseumMusic.index),5);
     }
-    report.checks.push(`${width}x${height}: picker bounds, original/title/album sort, grouped albums, direct selection, pause/play continuity, sorted previous/next, same-track position, Escape/outside close`);
+    report.checks.push(`${width}x${height}: picker bounds, large picker button, album-only groups, direct selection, pause/play continuity, sorted previous/next, same-track position, Escape/outside close`);
     console.log(`PASS ${width}x${height}: music picker and sorting`);
     await context.close();
   }
-  report.checks.push('390px native touch list scroll does not scroll page or switch tracks; selection/sort persist across navigation and reload; video resumes the selected track');
+  report.checks.push('390px native touch list scroll does not scroll page or switch tracks; selection/album groups persist across navigation and reload; video resumes the selected track');
   assert.deepEqual(report.errors,[]);
   report.status='passed';
 } catch(error){report.status='failed';report.failure=error.stack;if(page&&!page.isClosed())await page.screenshot({path:`${out}/failure.png`});throw error;}

@@ -1,0 +1,217 @@
+/* Rose & Lilac: visually matched to the supplied swatches, not their faint HEX labels.
+   This persistent stylesheet follows page/media/player CSS. Only surfaces and color
+   treatments belong here; dimensions, typography, media and motion stay in their files. */
+:root {
+  --powder-pink: #fde3e8;
+  --lilac-breeze: #ddd0e5;
+  --carnation: #f3aec3;
+  --mauve-dream: #bca5c8;
+  --raspberry-sorbet: #d88aab;
+  --violet-bloom: #9f80ad;
+  --warm-white: #fffcf7;
+  --plum: #38263f;
+
+  /* Darker relatives keep small text and interactive controls readable. */
+  --violet-action: #724b80;
+  --violet-hover: #654171;
+  --violet-pressed: #55335f;
+  --raspberry-ink: #914060;
+  --text-secondary: #624c69;
+  --text-on-mauve: #4f3659;
+  --surface-page: color-mix(in srgb, var(--powder-pink) 42%, var(--warm-white));
+  --surface-section: color-mix(in srgb, var(--lilac-breeze) 50%, var(--warm-white));
+  --surface-hover: color-mix(in srgb, var(--lilac-breeze) 70%, var(--warm-white));
+  --surface-note: color-mix(in srgb, var(--powder-pink) 65%, var(--warm-white));
+  --border-soft: color-mix(in srgb, var(--lilac-breeze) 72%, var(--warm-white));
+  --border-panel: var(--mauve-dream);
+  --edge-light: color-mix(in srgb, var(--warm-white) 75%, transparent);
+  --shadow-soft: 0 5px 16px color-mix(in srgb, var(--plum) 7%, transparent);
+  --shadow-panel: 0 8px 24px color-mix(in srgb, var(--plum) 12%, transparent);
+  --player-gradient: linear-gradient(125deg, var(--lilac-breeze), var(--mauve-dream));
+  --photo-scrim: color-mix(in srgb, var(--plum) 88%, transparent);
+
+  /* Compatibility aliases for the existing page styles. */
+  --paper: var(--surface-page);
+  --paper-deep: var(--surface-section);
+  --ink: var(--plum);
+  --muted: var(--text-secondary);
+  --muted-ink: var(--text-secondary);
+  --lavender: var(--violet-action);
+  --pink: var(--raspberry-ink);
+  --line: var(--border-soft);
+}
+
+html, body { background: var(--surface-page); color: var(--plum); }
+::selection { background: var(--lilac-breeze); color: var(--plum); }
+:where(a, button, input, select):focus-visible {
+  outline-color: var(--violet-action);
+}
+:where(button, input, select):disabled { cursor: not-allowed; }
+
+/* Shared page chrome, secondary actions and typography. */
+.brand__mark, .icon-button--more, .more-mark { background: var(--surface-section); }
+.brand__mark svg, .icon-button svg { stroke: var(--plum); }
+.icon-button--more svg, .more-mark svg { fill: var(--plum); }
+.museum-header { border-bottom-color: var(--border-soft); }
+.icon-button, .back-button, .quick-menu, .search-panel {
+  background: var(--warm-white); border-color: var(--border-soft); color: var(--plum);
+}
+.quick-menu, .search-panel { box-shadow: var(--shadow-soft); }
+.icon-button:hover, .back-button:hover, .quick-menu a:hover { background: var(--surface-hover); }
+.search-panel input { color: var(--plum); border-color: var(--border-panel); }
+.search-panel input:focus { border-color: var(--violet-action); }
+.search-panel input::placeholder { color: var(--text-secondary); opacity: 1; }
+.brand__motto, .section-index, .story-feature__description, .story-note,
+.chapter-count, .chapter-card__subtitle, .chapter-card__excerpt,
+.chapter-card__meta, .chapter-card__media, .chapter-subtitle, .chapter-meta,
+.chapter-date__month-year, .chapter-story__copy, .story-note__date,
+.story-aside__label, .story-intro__description, .hand-note,
+.moment-subtitle, .moment-story, .moment-meta, .story-gap,
+.memory-subtitle, .memory-meta, .memory-date__month-year,
+.memory-story__copy, .month-back, .pager-label, .pager-title, .pager-date,
+.video-label, .video-error, .media-fallback { color: var(--text-secondary); }
+.chapter-kicker, .chapter-card__number, .moment-date { color: var(--raspberry-ink); }
+.section-index i, .chapter-kicker i, .pager-divider { background: var(--border-panel); }
+.chapter-date__month-year, .memory-date__month-year { border-color: var(--border-panel); }
+.chapter-date__day, .memory-date__day, .chapter-location svg,
+.memory-location svg { color: var(--plum); stroke: currentColor; }
+
+/* Main archive surfaces: warm cards stand apart from the blush page. */
+.story-feature, .story-intro, .story-moment--reverse { background: var(--surface-section); }
+.story-divider { background: var(--border-panel); }
+.story-photo figcaption { background: var(--photo-scrim); color: var(--warm-white); }
+.story-moment { border-bottom-color: var(--border-soft); }
+.chapter-card { background: var(--warm-white); border-color: var(--border-soft); box-shadow: var(--shadow-soft); }
+.chapter-card:hover { background: var(--warm-white); border-color: var(--border-panel); box-shadow: var(--shadow-panel); }
+.chapter-card__arrow { background: var(--surface-section); color: var(--violet-action); }
+.chapter-card:hover .chapter-card__arrow { background: var(--lilac-breeze); }
+.chapter-card__meta i { color: var(--raspberry-ink); }
+.chapter-card__video-cover, .chapter-card__image-wrap { background: var(--surface-section); color: var(--text-secondary); }
+.view-toggle__button { color: var(--violet-action); }
+.view-toggle__button:hover { background: var(--surface-hover); }
+.view-toggle__button.is-active { background: var(--violet-action); color: var(--warm-white); box-shadow: var(--shadow-soft); }
+.view-toggle__button.is-active:hover { background: var(--violet-hover); }
+.view-toggle__button.is-active:active { background: var(--violet-pressed); }
+.round-link, .play-video, .clip-button { background: var(--violet-action); color: var(--warm-white); border-color: var(--violet-action); }
+.round-link:hover, .play-video:hover, .clip-button:hover { background: var(--violet-hover); }
+.round-link:active, .play-video:active, .clip-button:active { background: var(--violet-pressed); }
+
+.bottom-dock, .chapter-pager, .memory-pager {
+  background: var(--warm-white); border-color: var(--border-panel); box-shadow: var(--shadow-panel);
+}
+.bottom-dock__item { color: var(--text-secondary); }
+.bottom-dock__item:hover { background: var(--surface-hover); color: var(--violet-action); }
+.bottom-dock__item.is-current { background: var(--lilac-breeze); color: var(--violet-pressed); box-shadow: inset 0 0 0 1px var(--violet-bloom); }
+.bottom-dock__item.is-current span { text-decoration: underline; text-underline-offset: 3px; }
+.pager-item:hover .pager-label, .month-back:hover { color: var(--violet-action); }
+.pager-item.is-disabled { opacity: 1; color: var(--text-secondary); }
+.pager-item.is-disabled .pager-thumb { opacity: .5; }
+
+/* Existing polaroids retain their natural photographs and warm paper. */
+.story-photo, .mini-prints figure, .intro-photo, .intro-strip,
+.memory-print, .memory-cover, .polaroid { background: var(--warm-white); border-color: var(--border-soft); box-shadow: var(--shadow-soft); }
+.intro-caption, .chapter-story .story-note, .memory-story .hand-note,
+.chelsea-note { background: var(--surface-note); color: var(--text-secondary); border-color: var(--raspberry-sorbet); }
+.hand-note span { color: var(--raspberry-ink); }
+.memory-cover--video { background: var(--surface-section); border-color: var(--border-panel); }
+.memory-cover:has(video) { background: var(--plum); }
+.chapter-empty, .month-empty { background: var(--warm-white); color: var(--text-secondary); border-color: var(--border-panel); }
+.chapter-empty a, .month-empty a { color: var(--violet-action); }
+.chapter-stage, .memory-stage, .media-thumb, .media-thumb--video { background-color: var(--surface-section); }
+.stage-video { background-color: var(--surface-section); }
+.chapter-stage .stage-video { background-image: none; }
+.stage-next { background: var(--warm-white); color: var(--violet-action); border-color: var(--border-panel); }
+.stage-next:hover { background: var(--lilac-breeze); }
+.stage-play, .chapter-card__play { background: var(--warm-white); color: var(--violet-action); border-color: var(--border-panel); }
+.thumb-play, .media-kind, .stage-counter { background: var(--photo-scrim); color: var(--warm-white); border-color: var(--edge-light); }
+.media-thumb { border-color: var(--border-panel); }
+.media-thumb.is-selected { border-color: var(--violet-action); outline-color: var(--violet-action); }
+.media-image, .media-image.has-error, .media-thumb > .media-image::before { background-color: var(--surface-section); }
+.media-image.has-error .media-fallback { color: var(--text-secondary); }
+
+/* Splash: the one main-area wash; cards/buttons otherwise stay solid. */
+.opening { background: var(--surface-page); }
+.backdrop__wash { background: linear-gradient(140deg, color-mix(in srgb, var(--lilac-breeze) 80%, transparent), color-mix(in srgb, var(--powder-pink) 88%, transparent)); }
+.cover { background: var(--warm-white); border-color: var(--edge-light); box-shadow: var(--shadow-panel); }
+.cover::before, .quote-note::before { border-color: var(--border-soft); }
+.private-label, .established, .cover__seal { background: var(--surface-section); border-color: var(--border-panel); color: var(--violet-action); }
+.private-label { box-shadow: inset 0 0 0 4px var(--border-soft); }
+.private-label__dot { background: var(--violet-action); box-shadow: 0 0 0 6px var(--lilac-breeze); }
+.lock-icon { stroke: var(--violet-action); }
+.eyebrow, .cover__motto, .cover__footer p, .polaroid figcaption { color: var(--text-secondary); }
+.cover h1 span:first-child { color: var(--violet-action); }
+.cover h1 span:last-child { background: none; color: var(--raspberry-ink); -webkit-text-fill-color: currentColor; }
+.established__date { color: var(--violet-action); }
+.quote-note { background: var(--surface-section); color: var(--text-secondary); }
+.quote-note__mark, .quote-note__heart, .footer-rule, .scribble { color: var(--raspberry-ink); }
+.footer-rule::before, .footer-rule::after { background: var(--border-panel); }
+.enter-button { background: var(--violet-action); color: var(--warm-white); box-shadow: var(--shadow-panel); }
+.enter-button:hover { background: var(--violet-hover); filter: none; }
+.enter-button:active { background: var(--violet-pressed); }
+
+/* Modal: warm front, lilac reverse, a plum veil and solid controls. */
+.media-viewer { color: var(--plum); }
+.media-viewer::backdrop { background: color-mix(in srgb, var(--plum) 76%, transparent); }
+.media-viewer__front, .media-viewer__back { border-color: var(--edge-light); box-shadow: 0 2px 0 var(--mauve-dream), 0 5px 0 -1px var(--violet-bloom), var(--shadow-panel); }
+.media-viewer__panel, .media-viewer__photo-frame { background: var(--warm-white); border-color: var(--border-soft); }
+.media-viewer__panel::before { border-color: var(--edge-light); box-shadow: inset 0 1px 0 var(--warm-white); }
+.media-viewer__panel::after { background: none; }
+.media-viewer__stage { background: var(--surface-section); }
+.media-viewer__back { background: var(--lilac-breeze); color: var(--plum); }
+.media-viewer__back::before { border-color: var(--edge-light); box-shadow: none; }
+.media-viewer__back-rule { background: var(--violet-bloom); }
+.media-viewer__eyebrow, .media-viewer__caption, .media-viewer__counter { color: var(--text-secondary); }
+.media-viewer button { background: var(--surface-section); color: var(--violet-action); border-color: var(--border-panel); box-shadow: inset 0 1px 0 var(--edge-light); }
+.media-viewer button:hover { background: var(--lilac-breeze); box-shadow: var(--shadow-soft); }
+.media-viewer .media-viewer__spin { background: var(--violet-action); color: var(--warm-white); border-color: var(--violet-action); }
+.media-viewer .media-viewer__spin:hover { background: var(--violet-hover); }
+.media-viewer button:disabled { background: var(--surface-section); color: var(--text-secondary); opacity: 1; box-shadow: none; }
+.media-viewer__stage .video-error { background: var(--surface-section); color: var(--text-secondary); }
+
+/* Persistent player: deeper than the warm navbar, identical palette in all states. */
+.music-player {
+  --music-ink: var(--plum);
+  --music-muted: var(--text-on-mauve);
+  --music-accent: var(--violet-action);
+  --music-surface: var(--player-gradient);
+  background: var(--player-gradient); border-color: var(--violet-bloom);
+  box-shadow: var(--shadow-panel), inset 0 1px 0 var(--edge-light);
+}
+.music-player::before { border-color: var(--edge-light); }
+.music-cover { background: var(--warm-white); border-color: var(--edge-light); }
+.music-cover-photo { background: var(--mauve-dream); }
+.music-cover-label { background: var(--carnation); color: var(--plum); }
+.music-grip { background: var(--violet-action); }
+.music-pill .music-toggle, .music-controls .music-toggle { background: var(--violet-action); color: var(--warm-white); box-shadow: var(--shadow-soft); }
+.music-pill .music-toggle:hover, .music-controls .music-toggle:hover { background: var(--violet-hover); }
+.music-pill .music-toggle:active, .music-controls .music-toggle:active { background: var(--violet-pressed); }
+.music-player .music-handle, .music-controls .music-previous, .music-controls .music-next { color: var(--violet-pressed); }
+.music-player .music-library-toggle { background: var(--warm-white); border-color: var(--violet-action); color: var(--plum); }
+.music-player .music-library-toggle:hover { background: var(--surface-hover); border-color: var(--violet-action); }
+.music-player .music-library-toggle:active { background: var(--lilac-breeze); }
+.music-times, .music-dedication, .music-library-count,
+.music-library-order, .music-song-list .music-album-heading, .music-song-detail { color: var(--music-muted); }
+.music-dedication span { background: var(--violet-bloom); }
+.music-status { color: var(--plum); }
+.music-song-title, .music-library-header h2, .music-library .music-library-close { color: var(--plum); }
+.music-song-number { color: var(--text-on-mauve); }
+.music-song-list { scrollbar-color: var(--violet-action) var(--lilac-breeze); }
+.music-song:hover { background: var(--surface-hover); }
+.music-player .music-song[aria-current="true"] { background: var(--warm-white); border-color: var(--violet-action); }
+.music-seek::-webkit-slider-runnable-track { background: linear-gradient(to right, var(--violet-action) var(--seek-progress, 0%), var(--warm-white) var(--seek-progress, 0%)); box-shadow: 0 0 0 1px var(--violet-action); }
+.music-seek::-webkit-slider-thumb { background: var(--violet-action); }
+.music-seek::-moz-range-track { background: var(--warm-white); box-shadow: 0 0 0 1px var(--violet-action); }
+.music-seek::-moz-range-progress, .music-seek::-moz-range-thumb { background: var(--violet-action); }
+.music-seek:disabled { opacity: 1; }
+.music-route-status { background: var(--warm-white); color: var(--plum); box-shadow: var(--shadow-soft); }
+
+/* Focus/pressed treatments add an outline or inset edge, beyond color alone. */
+.view-toggle__button.is-active { box-shadow: inset 0 0 0 2px var(--violet-pressed), var(--shadow-soft); }
+.music-player button:focus-visible, .music-player input:focus-visible,
+.media-viewer button:focus-visible, .icon-button:focus-visible,
+.view-toggle__button:focus-visible, .chapter-card:focus-visible,
+.back-button:focus-visible, .stage-next:focus-visible, .stage-play:focus-visible,
+.media-thumb:focus-visible, .pager-item:focus-visible, .enter-button:focus-visible,
+.play-video:focus-visible, .clip-button:focus-visible { outline-color: var(--violet-action); }
+.bottom-dock__item:focus-visible, .round-link:focus-visible { outline: 2px solid var(--violet-action); outline-offset: 3px; }
+.music-pill .music-toggle:focus-visible, .music-controls .music-toggle:focus-visible { outline-color: var(--warm-white); }

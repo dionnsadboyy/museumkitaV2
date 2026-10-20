@@ -14,6 +14,8 @@
     "check:music-motion": "node scripts/check-music-motion.mjs",
     "check:playlist": "node scripts/check-playlist.mjs",
     "check:music-library": "node scripts/check-music-library.mjs",
+    "audio:prepare": "node scripts/prepare-audio-playlist.mjs",
+    "check:prepared-audio": "node scripts/check-prepared-audio.mjs",
     "check:audio-hosting": "node scripts/check-audio-hosting.mjs",
     "check:assets": "node scripts/check-assets.mjs"
   },
